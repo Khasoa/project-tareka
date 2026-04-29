@@ -11,6 +11,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 if str(BASE_DIR) not in sys.path:
     sys.path.append(str(BASE_DIR))
 
+if "/venv/" not in Path(sys.executable).as_posix():
+    raise RuntimeError(
+        "Alembic must run with the project virtualenv interpreter. "
+        "Use: /home/lydia/project/tareka/venv/bin/python -m alembic -c apps/api/alembic.ini <command>"
+    )
+
 from app.core.config import settings
 from app.db.base import Base
 

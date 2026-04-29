@@ -26,6 +26,10 @@ def create_application() -> FastAPI:
     def root() -> dict[str, str]:
         return {"message": "Welcome to tareka API"}
 
+    @app.get("/health", tags=["health"])
+    def health() -> dict[str, str]:
+        return {"status": "ok"}
+
     @app.get(f"{settings.API_V1_PREFIX}/version", tags=["system"])
     def version() -> dict[str, str]:
         return {"version": settings.APP_VERSION, "environment": settings.ENVIRONMENT}

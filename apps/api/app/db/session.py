@@ -1,13 +1,10 @@
 from typing import Generator
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
+from sqlalchemy.orm import Session, sessionmaker
 
 from app.core.config import settings
-
-
-class Base(DeclarativeBase):
-    pass
+from app.db.base_class import Base
 
 
 engine = create_engine(settings.DATABASE_URL, pool_pre_ping=True, future=True)
