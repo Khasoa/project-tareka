@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --olive: #171b18;
+  --stone: #242926;
+  --linen: #f0ebdd;
+  --gold: #d9a13a;
+  --brick: #b96a48;
+  --cyan: #62a8b7;
+  --fog: #8a8f8a;
+
+  --background: var(--olive);
+  --foreground: var(--linen);
+  --card: var(--stone);
+}
+
+.dark {
+  --background: var(--olive);
+  --foreground: var(--linen);
+  --card: var(--stone);
+}
+
+.hybrid {
+  --background: #f8f4ea;
+  --foreground: #1d231f;
+  --card: #ffffff;
+}
+
+.light {
+  --background: #ffffff;
+  --foreground: #1a1a1a;
+  --card: #f6f6f6;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body), Inter, Arial, sans-serif;
+}
+
+.font-heading {
+  font-family: var(--font-heading), Sora, sans-serif;
+}
