@@ -6,14 +6,6 @@ class UserRole(str, Enum):
     operator = "operator"
     company_admin = "company_admin"
     platform_admin = "platform_admin"
-from enum import Enum
-
-
-class UserRole(str, Enum):
-    recycler = "recycler"
-    operator = "operator"
-    company_admin = "company_admin"
-    platform_admin = "platform_admin"
 
 
 class LanguageCode(str, Enum):
