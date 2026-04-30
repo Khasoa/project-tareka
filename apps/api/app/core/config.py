@@ -34,6 +34,12 @@ class Settings(BaseSettings):
     ALLOWED_ORIGINS: str = "http://localhost:3000"
 
     ANTHROPIC_API_KEY: str = ""
+    ANTHROPIC_MODEL: str = "claude-opus-4-6"
+    AI_MAX_TOKENS: int = 600
+
+    TRANSLATION_PROVIDER: str = "nllb"
+    NLLB_MODEL: str = "facebook/nllb-200-distilled-600M"
+    HUGGINGFACE_API_KEY: str = ""
     KOTANI_API_KEY: str = ""
     KOTANI_BASE_URL: str = "https://api.kotanipay.io"
     AFRICASTALKING_USERNAME: str = "sandbox"

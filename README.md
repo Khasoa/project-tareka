@@ -39,13 +39,29 @@ At minimum, set:
 
 ```bash
 cd apps/api
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
 Backend target: `http://127.0.0.1:8000`
+
+## Redis + Celery local run
+
+Start Redis locally:
+
+```bash
+sudo service redis-server start
+```
+
+Start a Celery worker:
+
+```bash
+cd apps/api
+source .venv/bin/activate
+python -m celery -A app.core.celery_app worker --loglevel=info
+```
 
 ## Frontend run steps
 
@@ -61,8 +77,8 @@ Frontend target: `http://localhost:3000`
 
 ```bash
 cd apps/api
-alembic revision --autogenerate -m "init schema"
-alembic upgrade head
+python3 -m alembic revision --autogenerate -m "init schema"
+python3 -m alembic upgrade head
 ```
 
 ## Folder structure
