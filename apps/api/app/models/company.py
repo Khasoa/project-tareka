@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Boolean, DateTime, String, Text, func
+from sqlalchemy import Boolean, DateTime, ForeignKey, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.session import Base
@@ -18,6 +18,9 @@ class Company(Base):
     id: Mapped[str] = mapped_column(String(36), primary_key=True, index=True)
     name: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
     slug: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
+    headquarters_location_id: Mapped[str | None] = mapped_column(
+        ForeignKey("locations.id"), index=True, nullable=True
+    )
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     is_verified: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
@@ -32,3 +35,6 @@ class Company(Base):
     )
 
     staff_users: Mapped[list["User"]] = relationship(back_populates="company")
+    headquarters_location: Mapped["Location | None"] = relationship(
+        "Location", back_populates="companies", foreign_keys=[headquarters_location_id]
+    )

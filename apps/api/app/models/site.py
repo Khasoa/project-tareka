@@ -16,6 +16,7 @@ class Site(Base):
     id: Mapped[str] = mapped_column(String(36), primary_key=True, index=True)
     company_id: Mapped[str] = mapped_column(ForeignKey("companies.id"), index=True, nullable=False)
     operator_id: Mapped[str | None] = mapped_column(ForeignKey("users.id"), index=True, nullable=True)
+    location_id: Mapped[str | None] = mapped_column(ForeignKey("locations.id"), index=True, nullable=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     address: Mapped[str] = mapped_column(String(255), nullable=False)
     city: Mapped[str] = mapped_column(String(120), nullable=False)
@@ -34,3 +35,4 @@ class Site(Base):
         "User", foreign_keys=[operator_id], back_populates="assigned_site"
     )
     dropoffs: Mapped[list["Dropoff"]] = relationship(back_populates="site")
+    location: Mapped["Location | None"] = relationship("Location", back_populates="sites")

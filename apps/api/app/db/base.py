@@ -4,6 +4,7 @@ from app.models.company import Company
 from app.models.user import User
 from app.models.site import Site
 from app.models.dropoff import Dropoff
+from app.models.location import Location
 from app.models.notification import Notification
 from app.models.wallet import Wallet
 from app.models.reward_transaction import RewardTransaction
@@ -15,6 +16,7 @@ __all__ = [
     "Base",
     "Company",
     "Dropoff",
+    "Location",
     "Notification",
     "PayoutLedger",
     "RewardTransaction",
