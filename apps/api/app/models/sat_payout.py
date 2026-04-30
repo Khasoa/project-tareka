@@ -19,6 +19,9 @@ class SatPayout(Base):
     status: Mapped[str] = mapped_column(String(7), nullable=False)
     external_reference: Mapped[str | None] = mapped_column(String(255), nullable=True)
     sent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    attempt_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    failure_reason: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    last_attempt_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )

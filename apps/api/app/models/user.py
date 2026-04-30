@@ -48,3 +48,4 @@ class User(Base):
     )
     payout_ledgers: Mapped[list["PayoutLedger"]] = relationship(back_populates="user")
     sat_payouts: Mapped[list["SatPayout"]] = relationship(back_populates="user")
+    notifications: Mapped[list["Notification"]] = relationship(back_populates="user")

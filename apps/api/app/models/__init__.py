@@ -1,6 +1,7 @@
 from app.models.audit_log import AuditLog
 from app.models.company import Company
 from app.models.dropoff import Dropoff
+from app.models.notification import Notification
 from app.models.payout_ledger import PayoutLedger
 from app.models.reward_transaction import RewardTransaction
 from app.models.sat_payout import SatPayout
@@ -12,6 +13,7 @@ __all__ = [
     "AuditLog",
     "Company",
     "Dropoff",
+    "Notification",
     "PayoutLedger",
     "RewardTransaction",
     "SatPayout",

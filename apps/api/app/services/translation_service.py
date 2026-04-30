@@ -1,13 +1,19 @@
 from __future__ import annotations
 
+from hashlib import sha256
+
+import logging
 import httpx
 
 from sqlalchemy.orm import Session
 
+from app.core.cache import cache_get_json, cache_set_json
 from app.core.config import settings
 from app.services.ai_service import AIService
 from app.utils.language import detect_language
 from app.utils.input_sanitizer import sanitize_text
+
+_log = logging.getLogger(__name__)
 
 _LANG_MAP = {
     "en": "eng_Latn",
@@ -24,7 +30,8 @@ async def translate_content(
 ) -> dict[str, object]:
     ai = AIService(db, actor_user_id=actor_user_id)
     clean = sanitize_text(text)
-    target = sanitize_text(target_language).lower()
+    target = target_language.strip().lower()
+    target = sanitize_text(target)
     source_lang = detect_language(clean)
 
     if target not in _LANG_MAP:
@@ -52,10 +59,19 @@ async def translate_content(
             "reason": "source_equals_target",
         }
 
+    cache_key = _translation_cache_key(clean, target)
+    try:
+        cached = cache_get_json(cache_key)
+    except Exception:
+        _log.warning("translation_cache_unavailable")
+        cached = None
+    if isinstance(cached, dict):
+        return cached
+
     try:
         translated = await _translate_with_nllb(clean, source_lang, target)
         _safe_log(ai, clean, "nllb", settings.NLLB_MODEL, True)
-        return {
+        result = {
             "translated": translated,
             "source_lang": source_lang,
             "target_lang": target,
@@ -64,6 +80,11 @@ async def translate_content(
             "fallback_used": False,
             "skipped": False,
         }
+        try:
+            cache_set_json(cache_key, result, ttl_seconds=24 * 60 * 60)
+        except Exception:
+            _log.warning("translation_cache_unavailable")
+        return result
     except Exception:
         try:
             fallback = await ai.strict_translate_with_claude(clean, target)
@@ -196,6 +217,11 @@ def _source_to_nllb(source_language: str, target_language: str) -> str:
         return "swh_Latn"
     # Unknown source: infer from target pair and proceed.
     return "eng_Latn" if target_language == "sw" else "swh_Latn"
+
+
+def _translation_cache_key(text: str, target_language: str) -> str:
+    digest = sha256(f"{text}{target_language}".encode("utf-8")).hexdigest()
+    return f"translation:{digest}"
 
 
 def _safe_log(ai: AIService, text: str, provider: str, model: str, success: bool) -> None:
