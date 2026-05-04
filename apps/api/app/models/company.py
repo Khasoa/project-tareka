@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Boolean, DateTime, String, Text, func
+from sqlalchemy import Boolean, DateTime, ForeignKey, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.session import Base
@@ -24,6 +24,9 @@ class Company(Base):
     reward_tokens_enabled: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     reward_kes_enabled: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     reward_sats_enabled: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    headquarters_location_id: Mapped[str | None] = mapped_column(
+        ForeignKey("locations.id"), index=True, nullable=True
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
@@ -32,3 +35,8 @@ class Company(Base):
     )
 
     staff_users: Mapped[list["User"]] = relationship(back_populates="company")
+    headquarters_location: Mapped["Location | None"] = relationship(
+        "Location",
+        foreign_keys=[headquarters_location_id],
+        back_populates="companies",
+    )

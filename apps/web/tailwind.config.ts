@@ -6,21 +6,29 @@ const config: Config = {
     "./components/**/*.{ts,tsx}",
     "./lib/**/*.{ts,tsx}",
     "./store/**/*.{ts,tsx}",
+    "./hooks/**/*.{ts,tsx}",
   ],
   darkMode: ["class"],
   theme: {
     extend: {
       colors: {
         background: "var(--background)",
-        foreground: "var(--foreground)",
-        card: "var(--card)",
-        olive: "var(--olive)",
-        stone: "var(--stone)",
-        linen: "var(--linen)",
-        gold: "var(--gold)",
-        brick: "var(--brick)",
-        cyan: "var(--cyan)",
-        fog: "var(--fog)",
+        surface: "var(--surface)",
+        elevated: "var(--elevated)",
+        foreground: "var(--text-primary)",
+        muted: "var(--text-secondary)",
+        border: "var(--border-subtle)",
+        accent: {
+          amber: "var(--accent-amber)",
+          cyan: "var(--accent-cyan)",
+          "cyan-deep": "var(--accent-cyan-deep)",
+          mint: "var(--accent-mint-soft)",
+          "mint-dim": "var(--accent-mint-dim)",
+        },
+        nav: {
+          chrome: "var(--nav-chrome)",
+          ink: "var(--nav-chrome-text)",
+        },
       },
       fontFamily: {
         sans: ["var(--font-body)", "Inter", "sans-serif"],

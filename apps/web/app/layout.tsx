@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Sora } from "next/font/google";
-import { ThemeProvider } from "next-themes";
 
+import { Providers } from "./providers";
 import "./globals.css";
 
 const inter = Inter({
@@ -18,7 +18,8 @@ const sora = Sora({
 
 export const metadata: Metadata = {
   title: "tareka",
-  description: "Track recycling. Prove impact. Earn rewards.",
+  description:
+    "Track recycling. Prove impact. Every verified drop-off counts towards your impact record and appreciation tokens where applicable.",
 };
 
 export default function RootLayout({
@@ -27,15 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${sora.variable} font-sans antialiased`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          themes={["dark", "hybrid", "light"]}
-          enableSystem={false}
-          storageKey="tareka-theme"
-        >
-          {children}
-        </ThemeProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

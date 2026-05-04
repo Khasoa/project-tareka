@@ -1,6 +1,7 @@
 from app.db.session import Base
 from app.models.audit_log import AuditLog
 from app.models.company import Company
+from app.models.location import Location
 from app.models.user import User
 from app.models.site import Site
 from app.models.dropoff import Dropoff
@@ -14,6 +15,7 @@ __all__ = [
     "Base",
     "Company",
     "Dropoff",
+    "Location",
     "PayoutLedger",
     "RewardTransaction",
     "SatPayout",

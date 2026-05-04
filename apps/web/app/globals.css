@@ -3,43 +3,76 @@
 @tailwind utilities;
 
 :root {
-  --olive: #171b18;
-  --stone: #242926;
-  --linen: #f0ebdd;
-  --gold: #d9a13a;
-  --brick: #b96a48;
-  --cyan: #62a8b7;
-  --fog: #8a8f8a;
-
-  --background: var(--olive);
-  --foreground: var(--linen);
-  --card: var(--stone);
+  --background: #0e1110;
+  --surface: #1b211d;
+  --elevated: #202622;
+  --text-primary: #e6ece8;
+  --text-secondary: #a7b0aa;
+  --accent-amber: #d6b36a;
+  --accent-cyan: #7fbfcb;
+  --accent-cyan-deep: #5fa9b8;
+  --accent-mint-soft: #a7e6d7;
+  --accent-mint-dim: #7fc9b6;
+  --border-subtle: #2b322e;
+  --nav-chrome: #1b211d;
+  --nav-chrome-text: #e6ece8;
 }
 
 .dark {
-  --background: var(--olive);
-  --foreground: var(--linen);
-  --card: var(--stone);
+  --background: #0e1110;
+  --surface: #1b211d;
+  --elevated: #202622;
+  --text-primary: #e6ece8;
+  --text-secondary: #a7b0aa;
+  --accent-amber: #d6b36a;
+  --accent-cyan: #7fbfcb;
+  --accent-cyan-deep: #5fa9b8;
+  --accent-mint-soft: #a7e6d7;
+  --accent-mint-dim: #7fc9b6;
+  --border-subtle: #2b322e;
+  --nav-chrome: #1b211d;
+  --nav-chrome-text: #e6ece8;
 }
 
+/* Light main content; nav/sidebar use --nav-chrome in components */
 .hybrid {
-  --background: #f8f4ea;
-  --foreground: #1d231f;
-  --card: #ffffff;
+  --background: #e8edea;
+  --surface: #ffffff;
+  --elevated: #f2f5f3;
+  --text-primary: #161b18;
+  --text-secondary: #5a625d;
+  --accent-amber: #c9a45d;
+  --accent-cyan: #5fa9b8;
+  --accent-cyan-deep: #4a8f9d;
+  --accent-mint-soft: #7fc9b6;
+  --accent-mint-dim: #5fb39a;
+  --border-subtle: #cfd8d2;
+  --nav-chrome: #1b211d;
+  --nav-chrome-text: #e6ece8;
 }
 
 .light {
-  --background: #ffffff;
-  --foreground: #1a1a1a;
-  --card: #f6f6f6;
+  --background: #f4f6f5;
+  --surface: #ffffff;
+  --elevated: #eef1ef;
+  --text-primary: #141a17;
+  --text-secondary: #5f6862;
+  --accent-amber: #c9a45d;
+  --accent-cyan: #5fa9b8;
+  --accent-cyan-deep: #4a8f9d;
+  --accent-mint-soft: #7fc9b6;
+  --accent-mint-dim: #5fb39a;
+  --border-subtle: #d9e0dc;
+  --nav-chrome: #1b211d;
+  --nav-chrome-text: #e6ece8;
 }
 
 body {
   background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-body), Inter, Arial, sans-serif;
+  color: var(--text-primary);
+  font-family: var(--font-body), Inter, system-ui, sans-serif;
 }
 
 .font-heading {
-  font-family: var(--font-heading), Sora, sans-serif;
+  font-family: var(--font-heading), Sora, system-ui, sans-serif;
 }
