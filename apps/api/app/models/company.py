@@ -9,6 +9,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.session import Base
 
 if TYPE_CHECKING:
+    from app.models.product import Product
     from app.models.user import User
 
 
@@ -21,6 +22,7 @@ class Company(Base):
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     is_verified: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    is_approved: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False, server_default="false")
     reward_tokens_enabled: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     reward_kes_enabled: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     reward_sats_enabled: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
@@ -35,6 +37,7 @@ class Company(Base):
     )
 
     staff_users: Mapped[list["User"]] = relationship(back_populates="company")
+    products: Mapped[list["Product"]] = relationship("Product", back_populates="company")
     headquarters_location: Mapped["Location | None"] = relationship(
         "Location",
         foreign_keys=[headquarters_location_id],

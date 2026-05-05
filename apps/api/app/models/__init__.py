@@ -3,6 +3,7 @@ from app.models.company import Company
 from app.models.location import Location
 from app.models.dropoff import Dropoff
 from app.models.payout_ledger import PayoutLedger
+from app.models.product import Product
 from app.models.reward_transaction import RewardTransaction
 from app.models.sat_payout import SatPayout
 from app.models.site import Site
@@ -15,6 +16,7 @@ __all__ = [
     "Dropoff",
     "Location",
     "PayoutLedger",
+    "Product",
     "RewardTransaction",
     "SatPayout",
     "Site",

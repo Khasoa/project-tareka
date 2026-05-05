@@ -8,6 +8,7 @@ from app.models.dropoff import Dropoff
 from app.models.wallet import Wallet
 from app.models.reward_transaction import RewardTransaction
 from app.models.payout_ledger import PayoutLedger
+from app.models.product import Product
 from app.models.sat_payout import SatPayout
 
 __all__ = [
@@ -17,6 +18,7 @@ __all__ = [
     "Dropoff",
     "Location",
     "PayoutLedger",
+    "Product",
     "RewardTransaction",
     "SatPayout",
     "Site",
