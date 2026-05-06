@@ -34,19 +34,19 @@ export function LiveData({ metrics, noActivity }: LiveDataProps) {
   const isPreview = !metrics && !noActivity;
 
   return (
-    <div className="px-6 py-10 sm:px-10 sm:py-12">
+    <div className="px-6 py-8 sm:px-10 sm:py-10">
       <dl className="grid grid-cols-3 divide-x divide-[rgba(22,22,21,0.12)]">
         {display.map((m) => (
-          <div key={m.label} className="flex flex-col items-center gap-3 px-4 text-center sm:px-8">
+          <div key={m.label} className="flex flex-col items-center gap-2 px-4 text-center sm:px-8">
             <dd
-              className="font-heading text-4xl font-semibold tracking-[-0.03em] sm:text-5xl"
-              style={{ color: "#161615" }}
+              className="font-heading text-4xl font-bold tracking-[-0.03em] sm:text-5xl"
+              style={{ color: "#151613" }}
             >
               {m.value}
             </dd>
             <dt
-              className="text-[10px] font-medium uppercase tracking-[0.16em]"
-              style={{ color: "rgba(22,22,21,0.62)" }}
+              className="text-[10px] font-medium uppercase tracking-[0.12em]"
+              style={{ color: "#2A2C28" }}
             >
               {m.label}
             </dt>
@@ -55,8 +55,8 @@ export function LiveData({ metrics, noActivity }: LiveDataProps) {
       </dl>
 
       <p
-        className="mt-10 text-center text-[11px]"
-        style={{ color: "rgba(22,22,21,0.45)" }}
+        className="mt-7 text-center text-[11px] font-medium"
+        style={{ color: "#5B6058" }}
       >
         {noActivity
           ? "No activity yet — drop-offs appear here after your first verified collection."

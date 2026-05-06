@@ -94,7 +94,7 @@ function HeroAndFlow() {
 
 function LiveDataSection() {
   return (
-    <section className="py-20">
+    <section className="py-14">
       <div className="mx-auto max-w-3xl px-4 sm:px-6">
         {/* Contained sage analytics panel */}
         <div
@@ -102,7 +102,7 @@ function LiveDataSection() {
           style={{
             background: "#A8BFA6",
             boxShadow:
-              "inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -2px 8px rgba(22,22,21,0.07), 0 12px 40px rgba(22,22,21,0.18)",
+              "inset 0 1px 0 rgba(255,255,255,0.20), inset 0 -3px 10px rgba(22,22,21,0.09), 0 16px 48px rgba(22,22,21,0.22)",
           }}
         >
           <LiveData />
@@ -118,42 +118,42 @@ function LiveDataSection() {
 
 function ValueSplit() {
   return (
-    <section className="py-24">
+    <section className="py-16">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         {/* Inset sage container — dark background naturally frames it */}
         <div
-          className="sage-panel rounded-3xl px-8 py-16 sm:px-12 lg:px-16"
+          className="sage-panel rounded-3xl px-8 py-12 sm:px-12 lg:px-14"
           style={{
             background: "#A8BFA6",
             boxShadow:
               "inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -2px 10px rgba(22,22,21,0.06), 0 16px 56px rgba(22,22,21,0.20)",
           }}
         >
-        <div className="grid gap-16 lg:grid-cols-2">
+        <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">
 
           {/* For recyclers */}
-          <div className="space-y-6">
-            <p className="text-[10px] font-medium uppercase tracking-[0.16em]" style={{ color: "rgba(22,22,21,0.52)" }}>
+          <div className="space-y-5">
+            <p className="text-[11px] font-medium uppercase tracking-[0.10em]" style={{ color: "rgba(22,22,21,0.60)" }}>
               For recyclers
             </p>
-            <h2 className="font-heading text-xl font-semibold tracking-[-0.02em] sm:text-2xl" style={{ color: "#161615" }}>
+            <h2 className="font-heading text-xl font-semibold tracking-[-0.018em] sm:text-2xl" style={{ color: "#161615" }}>
               Find recycling points easily.
               <br />
               See impact grow over time.
             </h2>
-            <p className="text-sm leading-relaxed" style={{ color: "rgba(22,22,21,0.70)" }}>
+            <p className="text-sm leading-relaxed" style={{ color: "rgba(22,22,21,0.76)" }}>
               Every kilogram of waste diverted from landfill is logged and
               attributed to you. Where companies have recognition programmes
               configured, your record may qualify for appreciation tokens or
               local partner rewards.
             </p>
-            <ul className="space-y-3">
+            <ul className="space-y-2.5">
               {[
                 "Impact dashboard with verified drop-off history",
                 "Community leaderboards",
                 "Recognition where companies have it enabled",
               ].map((item) => (
-                <li key={item} className="flex items-start gap-2.5 text-sm" style={{ color: "rgba(22,22,21,0.70)" }}>
+                <li key={item} className="flex items-start gap-2.5 text-sm" style={{ color: "rgba(22,22,21,0.76)" }}>
                   <CheckIcon className="mt-0.5 h-4 w-4 shrink-0" style={{ color: "#2a3328" }} />
                   {item}
                 </li>
@@ -165,25 +165,25 @@ function ValueSplit() {
           </div>
 
           {/* For companies */}
-          <div className="space-y-6 lg:pl-14">
-            <p className="text-[10px] font-medium uppercase tracking-[0.16em]" style={{ color: "rgba(22,22,21,0.52)" }}>
+          <div className="space-y-5 lg:pl-10">
+            <p className="text-[11px] font-medium uppercase tracking-[0.10em]" style={{ color: "rgba(22,22,21,0.60)" }}>
               For businesses
             </p>
-            <h2 className="font-heading text-xl font-semibold tracking-[-0.02em] sm:text-2xl" style={{ color: "#161615" }}>
+            <h2 className="font-heading text-xl font-semibold tracking-[-0.018em] sm:text-2xl" style={{ color: "#161615" }}>
               Infrastructure for ESG reporting you can stand behind
             </h2>
-            <p className="text-sm leading-relaxed" style={{ color: "rgba(22,22,21,0.70)" }}>
+            <p className="text-sm leading-relaxed" style={{ color: "rgba(22,22,21,0.76)" }}>
               Track corporate environmental impact with verified data you can
               reference in sustainability reports. tareka's ledger of confirmed
               drop-offs gives you numbers you can defend — not modelled estimates.
             </p>
-            <ul className="space-y-3">
+            <ul className="space-y-2.5">
               {[
                 "Data collection infrastructure",
                 "Verifiable impact reports",
                 "Configure recognition programmes for recyclers",
               ].map((item) => (
-                <li key={item} className="flex items-start gap-2.5 text-sm" style={{ color: "rgba(22,22,21,0.70)" }}>
+                <li key={item} className="flex items-start gap-2.5 text-sm" style={{ color: "rgba(22,22,21,0.76)" }}>
                   <CheckIcon className="mt-0.5 h-4 w-4 shrink-0" style={{ color: "#2a3328" }} />
                   {item}
                 </li>
