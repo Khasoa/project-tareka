@@ -1,54 +1,75 @@
+/* Satoshi — primary heading font (Fontshare CDN, browser-loaded) */
+@import url('https://api.fontshare.com/v2/css?f[]=satoshi@700,500,400&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   Color system — "modern environmental infrastructure at dusk"
+   Dark surfaces: warm matte graphite. No green-black, no pale sage.
+   Section rhythm achieved through subtle olive / charcoal-sage surface shifts.
+   ───────────────────────────────────────────────────────────────────────────── */
+
 :root {
-  --background: #0e1110;
-  --surface: #1b211d;
-  --elevated: #202622;
-  --text-primary: #e6ece8;
-  --text-secondary: #a7b0aa;
+  --background: #161615;       /* deepest matte graphite */
+  --surface: #1d1e1b;          /* neutral graphite */
+  --elevated: #23251f;         /* olive graphite lift */
+  --text-primary: #d8dcd5;     /* soft warm off-white */
+  --text-secondary: #a0a8a2;
+  --text-dim: #6a716c;
+  --accent-sage: #a8bfa6;
+  --accent-sage-hover: #98af97;
+  --accent-rose: #e8a8a0;
   --accent-amber: #d6b36a;
   --accent-cyan: #7fbfcb;
   --accent-cyan-deep: #5fa9b8;
   --accent-mint-soft: #a7e6d7;
   --accent-mint-dim: #7fc9b6;
-  --border-subtle: #2b322e;
-  --nav-chrome: #1b211d;
-  --nav-chrome-text: #e6ece8;
+  --border-subtle: #2c2d2a;
+  --nav-chrome: #1d1e1b;
+  --nav-chrome-text: #d8dcd5;
 }
 
 .dark {
-  --background: #0e1110;
-  --surface: #1b211d;
-  --elevated: #202622;
-  --text-primary: #e6ece8;
-  --text-secondary: #a7b0aa;
+  --background: #161615;
+  --surface: #1d1e1b;
+  --elevated: #23251f;
+  --text-primary: #d8dcd5;
+  --text-secondary: #a0a8a2;
+  --text-dim: #6a716c;
+  --accent-sage: #a8bfa6;
+  --accent-sage-hover: #98af97;
+  --accent-rose: #e8a8a0;
   --accent-amber: #d6b36a;
   --accent-cyan: #7fbfcb;
   --accent-cyan-deep: #5fa9b8;
   --accent-mint-soft: #a7e6d7;
   --accent-mint-dim: #7fc9b6;
-  --border-subtle: #2b322e;
-  --nav-chrome: #1b211d;
-  --nav-chrome-text: #e6ece8;
+  --border-subtle: #2c2d2a;
+  --nav-chrome: #1d1e1b;
+  --nav-chrome-text: #d8dcd5;
 }
 
-/* Light main content; nav/sidebar use --nav-chrome in components */
+/* Light theme (app interior) */
 .hybrid {
   --background: #e8edea;
   --surface: #ffffff;
   --elevated: #f2f5f3;
   --text-primary: #161b18;
   --text-secondary: #5a625d;
+  --text-dim: #8a9690;
+  --accent-sage: #7fa57d;
+  --accent-sage-hover: #6a9068;
+  --accent-rose: #c88880;
   --accent-amber: #c9a45d;
   --accent-cyan: #5fa9b8;
   --accent-cyan-deep: #4a8f9d;
   --accent-mint-soft: #7fc9b6;
   --accent-mint-dim: #5fb39a;
   --border-subtle: #cfd8d2;
-  --nav-chrome: #1b211d;
-  --nav-chrome-text: #e6ece8;
+  --nav-chrome: #1d1e1b;
+  --nav-chrome-text: #d8dcd5;
 }
 
 .light {
@@ -57,14 +78,18 @@
   --elevated: #eef1ef;
   --text-primary: #141a17;
   --text-secondary: #5f6862;
+  --text-dim: #8a9690;
+  --accent-sage: #7fa57d;
+  --accent-sage-hover: #6a9068;
+  --accent-rose: #c88880;
   --accent-amber: #c9a45d;
   --accent-cyan: #5fa9b8;
   --accent-cyan-deep: #4a8f9d;
   --accent-mint-soft: #7fc9b6;
   --accent-mint-dim: #5fb39a;
   --border-subtle: #d9e0dc;
-  --nav-chrome: #1b211d;
-  --nav-chrome-text: #e6ece8;
+  --nav-chrome: #1d1e1b;
+  --nav-chrome-text: #d8dcd5;
 }
 
 body {
@@ -73,6 +98,85 @@ body {
   font-family: var(--font-body), Inter, system-ui, sans-serif;
 }
 
+/* Satoshi first, DM Sans (--font-heading) as reliable fallback */
 .font-heading {
-  font-family: var(--font-heading), Sora, system-ui, sans-serif;
+  font-family: 'Satoshi', var(--font-heading), Inter, system-ui, sans-serif;
+}
+
+/* Subtle film grain — surface depth without colour noise */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.022;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 200px;
+  mix-blend-mode: overlay;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Sage surface — reversed scheme for Live Metrics + Value Split sections.
+   Every component that reads CSS vars inherits dark text automatically.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.sage-panel {
+  --background:    #A8BFA6;               /* full sage surface */
+  --surface:       rgba(168,191,166,0.94);
+  --elevated:      rgba(22,22,21,0.09);   /* subtle dark overlay for hover states */
+  --text-primary:  #161615;
+  --text-secondary:#2A2F28;
+  --text-dim:      #3E463B;
+  --border-subtle: rgba(22,22,21,0.20);
+  --accent-sage:   #2a3328;               /* dark icon/accent on sage bg */
+  --accent-sage-hover: #1e2620;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Animations
+   ───────────────────────────────────────────────────────────────────────────── */
+
+@keyframes flow-pulse {
+  0%, 100% { opacity: 0.30; }
+  50% { opacity: 0.58; }
+}
+.animate-flow-pulse {
+  animation: flow-pulse 2.8s ease-in-out infinite;
+}
+
+@keyframes node-breathe {
+  0%, 100% { opacity: 0.06; }
+  50% { opacity: 0.13; }
+}
+.animate-node-a { animation: node-breathe 4.2s ease-in-out infinite; }
+.animate-node-b { animation: node-breathe 5.8s ease-in-out infinite 1.9s; }
+.animate-node-c { animation: node-breathe 7.1s ease-in-out infinite 0.7s; }
+
+/* Network map — city node ring breathing */
+@keyframes nmap-outer-glow {
+  0%, 100% { opacity: 0.14; }
+  50% { opacity: 0.32; }
+}
+@keyframes nmap-mid-glow {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.50; }
+}
+@keyframes nmap-core-pulse {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 1; }
+}
+.nmap-outer-pulse { animation: nmap-outer-glow 3.5s ease-in-out infinite; }
+.nmap-mid-pulse   { animation: nmap-mid-glow 3.5s ease-in-out infinite 0.4s; }
+.nmap-core-pulse  { animation: nmap-core-pulse 3.5s ease-in-out infinite 0.8s; }
+
+/* Network map — flowing route glow on city connections */
+@keyframes nmap-route-flow {
+  0%   { stroke-dashoffset: 20; }
+  100% { stroke-dashoffset: 0; }
+}
+.nmap-route-flow {
+  stroke-dasharray: 5 9;
+  animation: nmap-route-flow 3s linear infinite;
 }

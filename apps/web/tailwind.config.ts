@@ -17,8 +17,19 @@ const config: Config = {
         elevated: "var(--elevated)",
         foreground: "var(--text-primary)",
         muted: "var(--text-secondary)",
+        dim: "var(--text-dim)",
         border: "var(--border-subtle)",
+        sage: {
+          DEFAULT: "var(--accent-sage)",
+          hover: "var(--accent-sage-hover)",
+        },
+        rose: {
+          DEFAULT: "var(--accent-rose)",
+        },
         accent: {
+          sage: "var(--accent-sage)",
+          "sage-hover": "var(--accent-sage-hover)",
+          rose: "var(--accent-rose)",
           amber: "var(--accent-amber)",
           cyan: "var(--accent-cyan)",
           "cyan-deep": "var(--accent-cyan-deep)",
@@ -32,7 +43,7 @@ const config: Config = {
       },
       fontFamily: {
         sans: ["var(--font-body)", "Inter", "sans-serif"],
-        heading: ["var(--font-heading)", "Sora", "sans-serif"],
+        heading: ["Satoshi", "var(--font-heading)", "Inter", "sans-serif"],
       },
     },
   },

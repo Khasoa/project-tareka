@@ -5,11 +5,9 @@ import { cn } from "@/lib/utils";
 export function Logo({
   className,
   href = "/",
-  tone = "default",
 }: {
   className?: string;
   href?: string;
-  tone?: "default" | "chrome";
 }) {
   return (
     <Link
@@ -17,8 +15,9 @@ export function Logo({
       className={cn("font-heading text-lg font-semibold tracking-tight", className)}
       aria-label="tareka home"
     >
-      <span className={tone === "chrome" ? "text-nav-ink/75" : "text-muted"}>tare</span>
-      <span className="text-accent-cyan">ka</span>
+      <span className="text-foreground">ta</span>
+      <span className="text-accent-sage">re</span>
+      <span className="text-foreground">ka.</span>
     </Link>
   );
 }

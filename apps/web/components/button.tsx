@@ -7,14 +7,20 @@ import type { ButtonHTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-sage focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
-        primary: "bg-accent-amber text-[#0e1110] hover:opacity-90",
+        primary:
+          "bg-accent-sage text-[#161615] hover:bg-accent-sage-hover",
         secondary:
-          "border border-border bg-transparent text-foreground hover:bg-elevated",
-        ghost: "text-muted hover:bg-elevated hover:text-foreground",
+          "border border-border bg-transparent text-muted hover:bg-elevated hover:text-foreground",
+        graphite:
+          "bg-[#161615] text-[#e8edea] hover:bg-[#1e1e1c] focus-visible:ring-[#2a3328] focus-visible:ring-offset-[#a8bfa6]",
+        ghost:
+          "text-muted hover:bg-elevated hover:text-foreground",
+        danger:
+          "border border-[#b06060] text-[#b06060] bg-transparent hover:bg-[#b06060]/10",
       },
       size: {
         default: "h-10 px-4 py-2",
