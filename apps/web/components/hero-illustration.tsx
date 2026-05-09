@@ -80,7 +80,7 @@ export function HeroIllustration() {
               key={`${a}-${b}`}
               x1={na.x} y1={na.y}
               x2={nb.x} y2={nb.y}
-              stroke="#2a2e2c"
+              stroke="#2c2c2c"
               strokeWidth="0.7"
               opacity={isLong ? "0.25" : "0.5"}
             />
@@ -94,7 +94,7 @@ export function HeroIllustration() {
             cx={node.x}
             cy={node.y}
             r={node.r}
-            fill={node.dim ? "#282c2a" : "#3a3e3c"}
+            fill={node.dim ? "#262626" : "#3a3a3a"}
             opacity="0.65"
           />
         ))}

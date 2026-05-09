@@ -1,27 +1,48 @@
 "use client";
 
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/button";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/card";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { useThemeMode } from "@/hooks/useThemeMode";
 import { useAuthStore } from "@/store/auth";
 
+function formatRole(raw: string): string {
+  const map: Record<string, string> = {
+    recycler: "Recycler",
+    operator: "Operator",
+    company_admin: "Company Admin",
+    platform_admin: "Platform Admin",
+  };
+  return map[raw] ?? raw.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 export default function SettingsPage() {
+  const router = useRouter();
   const { user, loading, fetchCurrentUser, logout } = useAuthStore();
-  const { theme, setDarkMode, setHybridMode, setLightMode } = useThemeMode();
+  const { theme, setDarkMode, setLightMode } = useThemeMode();
 
   useEffect(() => {
     void fetchCurrentUser();
   }, [fetchCurrentUser]);
 
+  async function handleSignOut() {
+    try { await logout(); } catch { /* ignore */ }
+    router.replace("/auth/login");
+  }
+
   return (
-    <div className="mx-auto max-w-2xl space-y-8">
+    <div className="mx-auto max-w-2xl space-y-6 py-2">
       <div>
-        <h1 className="font-heading text-2xl font-semibold tracking-tight">Settings</h1>
-        <p className="mt-2 text-sm text-muted">Profile, appearance, and session.</p>
+        <h1 className="font-heading text-xl font-semibold tracking-tight text-foreground">
+          Settings
+        </h1>
+        <p className="mt-1 text-sm text-dim">Profile, appearance, and session.</p>
       </div>
 
+      {/* Profile */}
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Profile</CardTitle>
@@ -37,7 +58,7 @@ export default function SettingsPage() {
             </div>
             <div>
               <dt className="text-muted">Role</dt>
-              <dd className="text-foreground">{user.role.replace(/_/g, " ")}</dd>
+              <dd className="text-foreground">{formatRole(user.role)}</dd>
             </div>
             <div>
               <dt className="text-muted">Language</dt>
@@ -49,30 +70,37 @@ export default function SettingsPage() {
             </div>
           </dl>
         ) : (
-          <p className="text-sm text-muted">You are not signed in.</p>
+          <p className="text-sm text-dim">You are not signed in.</p>
         )}
       </Card>
 
+      {/* Appearance — Light and Dark only */}
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Appearance</CardTitle>
           <CardDescription>
-            Dark is default. Hybrid keeps navigation dark while content uses a light surface.
+            Light mode uses a warm off-white surface. Dark mode uses deep charcoal.
           </CardDescription>
         </CardHeader>
-        <div className="flex flex-wrap gap-2">
-          <ThemeButton active={theme === "dark"} onClick={setDarkMode} label="Dark" />
-          <ThemeButton active={theme === "hybrid"} onClick={setHybridMode} label="Hybrid" />
+        <div className="flex flex-wrap items-center gap-2">
           <ThemeButton active={theme === "light"} onClick={setLightMode} label="Light" />
+          <ThemeButton active={theme === "dark"} onClick={setDarkMode} label="Dark" />
+          <LanguageSwitcher variant="app" className="sm:ml-2" />
         </div>
       </Card>
 
+      {/* Session */}
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Session</CardTitle>
-          <CardDescription>Ends your browser session with the API cookies.</CardDescription>
+          <CardDescription>Ends your current browser session.</CardDescription>
         </CardHeader>
-        <Button type="button" variant="secondary" onClick={() => void logout()} disabled={loading}>
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={() => void handleSignOut()}
+          disabled={loading}
+        >
           Sign out
         </Button>
       </Card>
@@ -81,21 +109,15 @@ export default function SettingsPage() {
 }
 
 function ThemeButton({
-  label,
-  active,
-  onClick,
-}: {
-  label: string;
-  active: boolean;
-  onClick: () => void;
-}) {
+  label, active, onClick,
+}: { label: string; active: boolean; onClick: () => void }) {
   return (
     <button
       type="button"
       onClick={onClick}
       className={`rounded-md border px-4 py-2 text-sm font-medium transition ${
         active
-          ? "border-accent-cyan/50 bg-accent-cyan/10 text-accent-cyan"
+          ? "border-accent-sage/50 bg-accent-sage/10 text-foreground"
           : "border-border text-muted hover:bg-elevated hover:text-foreground"
       }`}
     >

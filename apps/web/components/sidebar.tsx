@@ -3,42 +3,93 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { useI18n } from "@/lib/i18n/i18n-provider";
 import { cn } from "@/lib/utils";
+import { useAuthStore } from "@/store/auth";
+import type { UserRole } from "@/types";
 
-const links = [
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/directory", label: "Directory" },
-  { href: "/wallet", label: "Wallet" },
-  { href: "/history", label: "History" },
-  { href: "/settings", label: "Settings" },
-] as const;
+type NavItem = { href: string; labelKey: string };
+
+function linksForRole(role: UserRole | undefined): readonly NavItem[] {
+  switch (role) {
+    case "operator":
+      return [
+        { href: "/operator/quick-log", labelKey: "dashboard.nav.quickLog" },
+        { href: "/directory", labelKey: "dashboard.nav.directory" },
+        { href: "/settings", labelKey: "dashboard.nav.settings" },
+      ] as const;
+    case "company_admin":
+      return [
+        { href: "/company/dashboard", labelKey: "dashboard.nav.overview" },
+        { href: "/directory", labelKey: "dashboard.nav.directory" },
+        { href: "/settings", labelKey: "dashboard.nav.settings" },
+      ] as const;
+    case "platform_admin":
+      return [
+        { href: "/admin", labelKey: "dashboard.nav.networkOps" },
+        { href: "/company/dashboard", labelKey: "dashboard.nav.orgWorkspace" },
+        { href: "/directory", labelKey: "dashboard.nav.directory" },
+        { href: "/settings", labelKey: "dashboard.nav.settings" },
+      ] as const;
+    default:
+      return [
+        { href: "/recycler/dashboard", labelKey: "dashboard.nav.home" },
+        { href: "/recycler/dashboard", labelKey: "dashboard.nav.dashboard" },
+        { href: "/directory", labelKey: "dashboard.nav.directory" },
+        { href: "/marketplace", labelKey: "nav.marketplace" },
+        { href: "/recycler/wallet", labelKey: "dashboard.nav.wallet" },
+        { href: "/recycler/history", labelKey: "dashboard.nav.history" },
+        { href: "/recycler/settings", labelKey: "dashboard.nav.settings" },
+      ] as const;
+  }
+}
+
+function isActive(pathname: string, href: string, role: UserRole | undefined): boolean {
+  if (href === "/recycler/dashboard") {
+    return pathname === "/recycler/dashboard";
+  }
+  if (href === "/marketplace") {
+    return pathname === "/marketplace" || pathname.startsWith("/marketplace/");
+  }
+  if (href === "/company/dashboard" || href === "/operator/quick-log") {
+    return pathname === href || pathname.startsWith(`${href}/`);
+  }
+  if (href === "/admin") {
+    return pathname === "/admin" || pathname.startsWith("/admin/");
+  }
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
 
 export function Sidebar({ className }: { className?: string }) {
   const pathname = usePathname();
+  const user = useAuthStore((s) => s.user);
+  const links = linksForRole(user?.role);
+  const { t } = useI18n();
 
   return (
     <aside
       className={cn(
-        "hidden w-52 shrink-0 border-r border-border bg-nav-chrome text-nav-ink md:flex md:flex-col",
+        "hidden w-52 shrink-0 border-r border-nav-line bg-nav-chrome md:flex md:flex-col",
         className,
       )}
     >
-      <div className="px-4 py-4 font-heading text-sm font-semibold tracking-wide text-nav-ink/90">
-        App
-      </div>
-      <nav className="flex flex-1 flex-col gap-0.5 px-2 pb-4" aria-label="App navigation">
-        {links.map((link) => {
-          const active = pathname === link.href || pathname.startsWith(`${link.href}/`);
+      <nav className="flex flex-1 flex-col gap-0.5 px-2 py-3" aria-label="App navigation">
+        {links.map((link, idx) => {
+          const active = isActive(pathname, link.href, user?.role);
+          const label = t(link.labelKey);
+          const key = `${link.href}-${label}-${idx}`;
+
           return (
             <Link
-              key={link.href}
+              key={key}
               href={link.href}
               className={cn(
-                "rounded-md px-3 py-2 text-sm text-nav-ink/75 transition hover:bg-white/5 hover:text-nav-ink",
-                active && "bg-accent-cyan/15 text-accent-cyan",
+                "rounded-md px-3 py-2 text-sm transition-colors",
+                "text-[color:var(--nav-chrome-muted)] hover:bg-white/[0.06] hover:text-nav-ink",
+                active && "bg-accent-sage/15 font-medium text-nav-ink",
               )}
             >
-              {link.label}
+              {label}
             </Link>
           );
         })}

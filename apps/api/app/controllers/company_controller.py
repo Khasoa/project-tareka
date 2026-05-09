@@ -4,8 +4,9 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
-from app.schemas.company import CompanyDetailResponse, CompanyListItemResponse
+from app.schemas.company import CompanyDetailResponse, CompanyListItemResponse, CompanyPublicImpactSummary
 from app.services.company_directory_service import get_company_by_id, list_companies_for_directory
+from app.services.impact_service import get_company_impact
 
 router = APIRouter(prefix="/companies", tags=["companies"])
 
@@ -39,4 +40,20 @@ def get_company(company_id: str, db: Session = Depends(get_db)):
     company = get_company_by_id(db, company_id)
     if not company:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company not found")
-    return company
+    pi = get_company_impact(db, company_id)
+    return CompanyDetailResponse(
+        id=company.id,
+        name=company.name,
+        slug=company.slug,
+        description=company.description,
+        is_active=company.is_active,
+        is_verified=company.is_verified,
+        public_impact=CompanyPublicImpactSummary(
+            verified_dropoffs=pi["verified_dropoffs"],
+            total_estimated_weight_kg=pi["total_estimated_weight_kg"],
+            estimated_weight_label=pi["estimated_weight_label"],
+            total_estimated_co2_avoided_kg=pi["total_estimated_co2_avoided_kg"],
+            co2_estimate_label=pi["co2_estimate_label"],
+            is_estimate=pi["is_estimate"],
+        ),
+    )

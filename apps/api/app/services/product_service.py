@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 from decimal import Decimal
+from uuid import uuid4
 
 from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models.company import Company
+from app.models.reward_redemption import RewardRedemption
 from app.models.location import Location
 from app.models.site import Site
 from app.models.user import User
@@ -15,12 +17,18 @@ from app.schemas.product import (
     CompanyCatalogueResponse,
     CompanyProductSummaryResponse,
     LocationSummary,
+    MarketplaceFeedResponse,
+    MarketplaceListingItemResponse,
     PaginatedResponse,
     ProductDetailResponse,
     ProductListItemResponse,
+    ProductRedeemResponse,
+    RedemptionHistoryResponse,
     RewardContext,
     RewardEligibility,
+    RewardRedemptionItemResponse,
 )
+from app.services.wallet_service import WalletService
 
 
 # ---------------------------------------------------------------------------
@@ -75,19 +83,70 @@ def _resolve_company_location(db: Session, company: Company) -> LocationSummary:
     return LocationSummary()
 
 
+def _region_label(loc: LocationSummary) -> str | None:
+    parts = [p for p in (loc.city, loc.country) if p and str(p).strip()]
+    if not parts:
+        return None
+    return " · ".join(str(p).strip() for p in parts[:2])
+
+
+def _reward_offerings_labels(
+    company: Company,
+    has_discount_listing: bool,
+    has_redeem_listing: bool,
+    has_token_gate: bool,
+) -> list[str]:
+    labels: list[str] = []
+    if company.reward_tokens_enabled:
+        labels.append("Token redemption" if has_token_gate else "Appreciation tokens")
+    if company.reward_kes_enabled:
+        labels.append("Priced offers (KES)")
+    if company.reward_sats_enabled:
+        labels.append("Sats")
+    if has_discount_listing:
+        labels.append("Discounts & vouchers")
+    if has_redeem_listing:
+        labels.append("Redemptions")
+    return list(dict.fromkeys(labels))
+
+
 def _company_to_summary(
     db: Session,
     company: Company,
     product_count: int,
+    *,
+    materials_preview: list[str] | None = None,
+    capability: tuple[bool, bool, bool] | None = None,
 ) -> CompanyProductSummaryResponse:
+    loc = _resolve_company_location(db, company)
+    mats = (
+        materials_preview
+        if materials_preview is not None
+        else product_repo.aggregate_company_material_tags(db, company.id)
+    )
+    caps = (
+        capability
+        if capability is not None
+        else product_repo.company_product_capability_flags(db, company.id)
+    )
+    has_disc, has_redeem, tok_req_products = caps
     return CompanyProductSummaryResponse(
         id=company.id,
         name=company.name,
         slug=company.slug,
         description=company.description,
-        location=_resolve_company_location(db, company),
+        is_verified=company.is_verified,
+        location=loc,
         image_url=None,
         product_count=product_count,
+        region_label=_region_label(loc),
+        materials_preview=mats,
+        reward_offerings=_reward_offerings_labels(
+            company,
+            has_disc,
+            has_redeem,
+            tok_req_products,
+        ),
     )
 
 
@@ -102,11 +161,38 @@ def list_participating_companies(
     offset: int = 0,
 ) -> PaginatedResponse[CompanyProductSummaryResponse]:
     companies = product_repo.get_participating_companies(db, limit=limit, offset=offset)
+    ids = [c.id for c in companies]
+    counts = product_repo.bulk_company_product_counts(db, ids)
+    mats_map = product_repo.bulk_company_material_previews(db, ids)
+    caps_map = product_repo.bulk_company_capability_flags(db, ids)
+
     items = [
-        _company_to_summary(db, c, product_repo.get_company_product_count(db, c.id))
+        _company_to_summary(
+            db,
+            c,
+            counts.get(c.id, 0),
+            materials_preview=mats_map.get(c.id, []),
+            capability=caps_map.get(c.id, (False, False, False)),
+        )
         for c in companies
     ]
     return PaginatedResponse(items=items, limit=limit, offset=offset, count=len(items))
+
+
+def get_partner_catalogue_by_slug(
+    db: Session,
+    slug: str,
+    current_user: User | None = None,
+    limit: int = 20,
+    offset: int = 0,
+) -> CompanyCatalogueResponse:
+    company = product_repo.get_participating_company_by_slug(db, slug)
+    if not company:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Partner not found",
+        )
+    return get_company_catalogue(db, company.id, current_user, limit=limit, offset=offset)
 
 
 def get_company_catalogue(
@@ -265,3 +351,209 @@ def _build_reward_context(product, wallet) -> RewardContext:
         )
 
     return RewardContext(has_context=len(rewards) > 0, rewards=rewards)
+
+
+# ---------------------------------------------------------------------------
+# Marketplace — aggregates public partner rewards (not speculative trading UX)
+# ---------------------------------------------------------------------------
+
+
+def _environmental_category_from_story(story: dict | None) -> str | None:
+    if not isinstance(story, dict):
+        return None
+    return story.get("environmental_category") or story.get("category")
+
+
+def _availability_summary(availability: list | None) -> str | None:
+    if not isinstance(availability, list) or not availability:
+        return None
+    first = availability[0]
+    if isinstance(first, dict):
+        title = first.get("name") or first.get("type")
+        cnt = len(availability)
+        if cnt == 1 or not title:
+            return title
+        return f"{title} · +{cnt - 1}"
+    return None
+
+
+def _fulfillment_instructions_snapshot(product) -> str | None:
+    avail = product.availability
+    if not isinstance(avail, list) or not avail:
+        return None
+    chunks: list[str] = []
+    for slot in avail[:4]:
+        if not isinstance(slot, dict):
+            continue
+        bits = [slot.get(n) for n in ("name", "location", "contact")]
+        chunk = " — ".join(b for b in bits if isinstance(b, str) and b.strip())
+        if chunk:
+            chunks.append(chunk.strip())
+    if not chunks:
+        return None
+    return "; ".join(chunks)
+
+
+def _reward_model_tags(product, company: Company) -> list[str]:
+    tags: list[str] = []
+    story = product.product_story if isinstance(product.product_story, dict) else {}
+
+    if isinstance(story.get("reward_models"), list):
+        for x in story["reward_models"]:
+            if isinstance(x, str) and x.strip():
+                tags.append(x.strip())
+
+    if product.is_discountable:
+        tags.append("partner_discount")
+    if product.is_redeemable:
+        tags.append("redeemable_offer")
+
+    extras = story.get("reward_model_hints")
+    if isinstance(extras, list):
+        for x in extras:
+            if isinstance(x, str) and x.strip():
+                tags.append(x.strip())
+
+    if company.reward_sats_enabled and story.get("sats_eligible", True):
+        tags.append("sats_partner_program")
+
+    # stable order, unique
+    seen: set[str] = set()
+    ordered: list[str] = []
+    for t in tags:
+        tl = t.lower()
+        if tl not in seen:
+            seen.add(tl)
+            ordered.append(t)
+
+    return ordered
+
+
+def _to_marketplace_item(product, company: Company) -> MarketplaceListingItemResponse:
+    cat = _environmental_category_from_story(
+        product.product_story if isinstance(product.product_story, dict) else None
+    )
+    return MarketplaceListingItemResponse(
+        id=product.id,
+        company_id=company.id,
+        company_name=company.name,
+        company_slug=company.slug,
+        partner_verified=company.is_verified,
+        partner_sats_program=bool(company.reward_sats_enabled),
+        title=product.title,
+        short_description=product.short_description,
+        image_url=product.image_url,
+        price_kes=product.price_kes,
+        token_requirement=product.token_requirement,
+        is_redeemable=product.is_redeemable,
+        is_discountable=product.is_discountable,
+        environmental_category=cat,
+        reward_models=_reward_model_tags(product, company),
+        availability_summary=_availability_summary(product.availability),
+    )
+
+
+def list_marketplace_feed(
+    db: Session,
+    limit: int = 24,
+    offset: int = 0,
+    partner_slug: str | None = None,
+) -> MarketplaceFeedResponse:
+    total = product_repo.count_marketplace_products(db, company_slug=partner_slug)
+    rows = product_repo.list_marketplace_products_with_companies(
+        db, limit=limit, offset=offset, company_slug=partner_slug
+    )
+    items = [_to_marketplace_item(p, c) for p, c in rows]
+    return MarketplaceFeedResponse(items=items, limit=limit, offset=offset, count=len(items), total=total)
+
+
+def redeem_product(
+    db: Session,
+    current_user: User,
+    product_id: str,
+) -> ProductRedeemResponse:
+    """Spend appreciation tokens toward a redeemable catalogue item."""
+    product = product_repo.get_product_detail(db, product_id)
+    if not product:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Reward not available",
+        )
+    company = db.scalars(select(Company).where(Company.id == product.company_id)).first()
+    if not company:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Reward not available")
+
+    if not product.is_redeemable or product.token_requirement is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="This item is not open for appreciation-token redemption.",
+        )
+
+    wallet = product_repo.get_user_company_wallet_context(db, current_user.id, product.company_id)
+    if wallet is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No recognition wallet exists for this partner yet. Complete a verified drop-off with "
+            "them to earn appreciation tokens.",
+        )
+
+    qty = Decimal(str(product.token_requirement))
+    svc = WalletService(db)
+    try:
+        svc.redeem_tokens(wallet, qty)
+    except HTTPException:
+        db.rollback()
+        raise
+
+    snapshot = _fulfillment_instructions_snapshot(product)
+    redemption = RewardRedemption(
+        id=str(uuid4()),
+        user_id=current_user.id,
+        wallet_id=wallet.id,
+        company_id=product.company_id,
+        product_id=product.id,
+        tokens_spent=qty,
+        instructions_snapshot=snapshot,
+    )
+    db.add(redemption)
+    try:
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
+
+    return ProductRedeemResponse(
+        redemption_id=redemption.id,
+        product_id=product.id,
+        product_title=product.title,
+        company_name=company.name,
+        tokens_spent=qty,
+        message="Redemption recorded. Follow the fulfilment hints from the partner.",
+        instructions_snapshot=snapshot,
+    )
+
+
+def list_user_reward_redemptions(
+    db: Session,
+    user_id: str,
+    limit: int = 30,
+    offset: int = 0,
+) -> RedemptionHistoryResponse:
+    rows = product_repo.list_reward_redemptions_for_user(db, user_id, limit=limit, offset=offset)
+    total = product_repo.count_reward_redemptions_for_user(db, user_id)
+    items = [
+        RewardRedemptionItemResponse(
+            id=rr.id,
+            product_id=prod.id,
+            product_title=prod.title,
+            company_name=c.name,
+            company_slug=c.slug,
+            tokens_spent=rr.tokens_spent,
+            instructions_snapshot=rr.instructions_snapshot,
+            created_at=rr.created_at,
+        )
+        for rr, prod, c in rows
+    ]
+    return RedemptionHistoryResponse(
+        items=items, limit=limit, offset=offset, count=len(items), total=total
+    )

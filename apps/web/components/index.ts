@@ -1,7 +1,7 @@
 export { ActivityList, type ActivityItem } from "./activity-list";
 export { Badge } from "./badge";
 export { Button } from "./button";
-export { Card, CardDescription, CardHeader, CardTitle } from "./card";
+export { DashboardAnchor } from "./dashboard-anchor";
 export { ErrorState } from "./error-state";
 export { MarketingFooter } from "./footer";
 export { KPIGrid } from "./kpi-grid";

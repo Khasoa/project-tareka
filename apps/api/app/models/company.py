@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, String, Text, func
+from sqlalchemy import Boolean, DateTime, ForeignKey, JSON, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.session import Base
@@ -26,6 +26,10 @@ class Company(Base):
     reward_tokens_enabled: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     reward_kes_enabled: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     reward_sats_enabled: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+
+    # Optional sats settlement strategy (Lightning / Kotani-compatible batch flows, etc.)
+    sats_reward_rail: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    sats_reward_config: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     headquarters_location_id: Mapped[str | None] = mapped_column(
         ForeignKey("locations.id"), index=True, nullable=True
     )

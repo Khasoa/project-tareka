@@ -30,7 +30,7 @@ export function SiteCard({ site, featured = false, className, ...props }: SiteCa
           aria-hidden
           style={{
             background:
-              "radial-gradient(ellipse at top left, rgba(168,191,166,0.06) 0%, transparent 70%)",
+              "radial-gradient(ellipse at top left, rgba(232,237,234,0.06) 0%, transparent 70%)",
           }}
         />
       )}

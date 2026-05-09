@@ -39,6 +39,16 @@ class SatPayoutStatus(str, Enum):
     failed = "failed"
 
 
+class SatsRewardRail(str, Enum):
+    """How a partner intends to settle participation sats (infra hint, not a trading product)."""
+
+    unspecified = "unspecified"
+    kotani_compatible = "kotani_compatible"
+    lightning_batch = "lightning_batch"
+    low_connectivity_batch = "low_connectivity_batch"
+    manual_reconciliation = "manual_reconciliation"
+
+
 class FraudStatus(str, Enum):
     open = "open"
     reviewed = "reviewed"

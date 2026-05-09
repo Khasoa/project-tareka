@@ -29,9 +29,9 @@ class AuthService:
 
     def register_user(self, payload: RegisterRequest) -> User:
         if payload.email and self.user_repository.get_by_email(payload.email):
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already in use")
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Email already in use")
         if payload.phone and self.user_repository.get_by_phone(payload.phone):
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Phone already in use")
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Phone already in use")
 
         hashed = hash_password(payload.password)
         return self.user_repository.create_user(payload, hashed)

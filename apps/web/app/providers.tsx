@@ -4,6 +4,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
 import { useState } from "react";
 
+import { I18nProvider } from "@/lib/i18n/i18n-provider";
+
 function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {
@@ -23,12 +25,12 @@ export function Providers({ children }: Readonly<{ children: React.ReactNode }>)
     <QueryClientProvider client={queryClient}>
       <ThemeProvider
         attribute="class"
-        defaultTheme="dark"
-        themes={["dark", "hybrid", "light"]}
+        defaultTheme="light"
+        themes={["dark", "light"]}
         enableSystem={false}
         storageKey="tareka-theme"
       >
-        {children}
+        <I18nProvider>{children}</I18nProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

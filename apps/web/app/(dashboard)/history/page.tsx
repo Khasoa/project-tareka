@@ -125,7 +125,7 @@ export default function HistoryPage() {
           {filtered.map((d, index) => (
             <li key={d.id} className="flex gap-4">
               <div className="flex w-4 shrink-0 flex-col items-center pt-2">
-                <span className="h-3 w-3 rounded-full border border-accent-cyan/40 bg-accent-cyan/80" />
+                <span className="h-3 w-3 rounded-full border border-accent-sage/40 bg-accent-sage/80" />
                 {index < filtered.length - 1 ? (
                   <span className="mt-2 min-h-[2rem] w-px flex-1 bg-border" aria-hidden />
                 ) : null}

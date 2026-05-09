@@ -16,7 +16,7 @@ const buttonVariants = cva(
         secondary:
           "border border-border bg-transparent text-muted hover:bg-elevated hover:text-foreground",
         graphite:
-          "bg-[#161615] text-[#e8edea] hover:bg-[#1e1e1c] focus-visible:ring-[#2a3328] focus-visible:ring-offset-[#a8bfa6]",
+          "bg-[#161615] text-[#e8edea] hover:bg-[#1e1e1c] focus-visible:ring-accent-sage focus-visible:ring-offset-surface",
         ghost:
           "text-muted hover:bg-elevated hover:text-foreground",
         danger:

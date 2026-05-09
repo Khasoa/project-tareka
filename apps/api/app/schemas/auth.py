@@ -104,3 +104,4 @@ class UserResponse(BaseModel):
     language: str
     is_active: bool
     is_verified: bool
+    company_id: str | None = None

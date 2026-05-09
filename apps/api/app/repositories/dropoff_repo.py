@@ -6,6 +6,7 @@ from sqlalchemy import and_, desc, func, select
 from sqlalchemy.orm import Session
 
 from app.models.dropoff import Dropoff
+from app.models.site import Site
 
 
 class DropoffRepository:
@@ -59,15 +60,22 @@ class DropoffRepository:
         stmt = select(func.count()).select_from(Dropoff).where(Dropoff.recycler_id == recycler_id)
         return int(self.db.scalar(stmt) or 0)
 
-    def get_by_site(self, site_id: str, *, limit: int = 20, offset: int = 0) -> list[Dropoff]:
+    def get_by_company_with_labels(
+        self, company_id: str, *, limit: int = 50, offset: int = 0
+    ) -> list[tuple[Dropoff, str, str]]:
+        from app.models.user import User
+
         stmt = (
-            select(Dropoff)
-            .where(Dropoff.site_id == site_id)
+            select(Dropoff, Site.name, User.full_name)
+            .join(Site, Site.id == Dropoff.site_id)
+            .join(User, User.id == Dropoff.recycler_id)
+            .where(Dropoff.company_id == company_id)
             .order_by(desc(Dropoff.confirmed_at), desc(Dropoff.id))
             .limit(limit)
             .offset(offset)
         )
-        return list(self.db.scalars(stmt).all())
+        rows = self.db.execute(stmt).all()
+        return [(row[0], str(row[1]), str(row[2])) for row in rows]
 
     @staticmethod
     def new_id() -> str:

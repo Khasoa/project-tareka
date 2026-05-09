@@ -1,9 +1,11 @@
 from app.models.audit_log import AuditLog
+from app.models.company_access_request import CompanyAccessRequest
 from app.models.company import Company
 from app.models.location import Location
 from app.models.dropoff import Dropoff
 from app.models.payout_ledger import PayoutLedger
 from app.models.product import Product
+from app.models.reward_redemption import RewardRedemption
 from app.models.reward_transaction import RewardTransaction
 from app.models.sat_payout import SatPayout
 from app.models.site import Site
@@ -12,11 +14,13 @@ from app.models.wallet import Wallet
 
 __all__ = [
     "AuditLog",
+    "CompanyAccessRequest",
     "Company",
     "Dropoff",
     "Location",
     "PayoutLedger",
     "Product",
+    "RewardRedemption",
     "RewardTransaction",
     "SatPayout",
     "Site",

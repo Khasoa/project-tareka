@@ -6,90 +6,75 @@
 @tailwind utilities;
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   Color system — "modern environmental infrastructure at dusk"
-   Dark surfaces: warm matte graphite. No green-black, no pale sage.
-   Section rhythm achieved through subtle olive / charcoal-sage surface shifts.
+   Color system — light = dashboards / inner app; .dark = marketing + auth shell.
+   True matte charcoal / graphite in dark mode; warm parchment light mode.
+   Sage #A8BFA6 for intentional UI only (never page/shell tint).
+   Blue-sage (--map-glow-blue-sage) reserved for map/network SVG glow.
    ───────────────────────────────────────────────────────────────────────────── */
 
 :root {
-  --background: #161615;       /* deepest matte graphite */
-  --surface: #1d1e1b;          /* neutral graphite */
-  --elevated: #23251f;         /* olive graphite lift */
-  --text-primary: #d8dcd5;     /* soft warm off-white */
-  --text-secondary: #a0a8a2;
-  --text-dim: #6a716c;
-  --accent-sage: #a8bfa6;
-  --accent-sage-hover: #98af97;
-  --accent-rose: #e8a8a0;
-  --accent-amber: #d6b36a;
-  --accent-cyan: #7fbfcb;
-  --accent-cyan-deep: #5fa9b8;
-  --accent-mint-soft: #a7e6d7;
-  --accent-mint-dim: #7fc9b6;
-  --border-subtle: #2c2d2a;
-  --nav-chrome: #1d1e1b;
-  --nav-chrome-text: #d8dcd5;
+  /* Shared semantics — map-only accent; never use as page fill */
+  --map-glow-blue-sage: #8FB2AE;
+
+  /* Page + content layers */
+  --background:        #F1EFE8;
+  --canvas:            #EEECE4;
+  --surface:           #F8F7F2;
+  --surface-focus:     #FFFFFF;
+  --surface-raised:    #F3F1EA;
+  --elevated:          #E8E5DC;
+  --elevated-strong:   #ECE9E0;
+
+  /* Borders */
+  --border-subtle:     #D6D2C6;
+  --border-soft:       rgba(22, 22, 21, 0.10);
+
+  /* Text */
+  --text-primary:      #161615;
+  --text-secondary:    #565A52;
+  --text-dim:          #777B72;
+
+  /* Accent — sage signal only */
+  --accent-sage:       #A8BFA6;
+  --accent-sage-hover: #B7C9B5;
+
+  /* Error / warning */
+  --accent-rose:       #c47070;
+
+  /* Dark base/surface aliases (for reference + future tokens) */
+  --background-dark-neutral: #111111;
+  --surface-dark-neutral:    #1C1C1C;
+
+  /* Nav chrome — neutral charcoal in both themes */
+  --nav-chrome:          #111111;
+  --nav-chrome-text:     #E6E8E3;
+  --nav-chrome-muted:    rgba(230, 232, 227, 0.58);
+  --nav-chrome-border:   rgba(232, 237, 234, 0.10);
 }
 
 .dark {
-  --background: #161615;
-  --surface: #1d1e1b;
-  --elevated: #23251f;
-  --text-primary: #d8dcd5;
-  --text-secondary: #a0a8a2;
-  --text-dim: #6a716c;
-  --accent-sage: #a8bfa6;
-  --accent-sage-hover: #98af97;
-  --accent-rose: #e8a8a0;
-  --accent-amber: #d6b36a;
-  --accent-cyan: #7fbfcb;
-  --accent-cyan-deep: #5fa9b8;
-  --accent-mint-soft: #a7e6d7;
-  --accent-mint-dim: #7fc9b6;
-  --border-subtle: #2c2d2a;
-  --nav-chrome: #1d1e1b;
-  --nav-chrome-text: #d8dcd5;
-}
+  --background:        var(--background-dark-neutral);
+  --canvas:            #121212;
+  --surface:           var(--surface-dark-neutral);
+  --surface-raised:    #202020;
+  --elevated:          #232323;
+  --elevated-strong:   #262626;
 
-/* Light theme (app interior) */
-.hybrid {
-  --background: #e8edea;
-  --surface: #ffffff;
-  --elevated: #f2f5f3;
-  --text-primary: #161b18;
-  --text-secondary: #5a625d;
-  --text-dim: #8a9690;
-  --accent-sage: #7fa57d;
-  --accent-sage-hover: #6a9068;
-  --accent-rose: #c88880;
-  --accent-amber: #c9a45d;
-  --accent-cyan: #5fa9b8;
-  --accent-cyan-deep: #4a8f9d;
-  --accent-mint-soft: #7fc9b6;
-  --accent-mint-dim: #5fb39a;
-  --border-subtle: #cfd8d2;
-  --nav-chrome: #1d1e1b;
-  --nav-chrome-text: #d8dcd5;
-}
+  --border-subtle:     rgba(232, 237, 234, 0.10);
+  --border-soft:       rgba(232, 237, 234, 0.10);
 
-.light {
-  --background: #f4f6f5;
-  --surface: #ffffff;
-  --elevated: #eef1ef;
-  --text-primary: #141a17;
-  --text-secondary: #5f6862;
-  --text-dim: #8a9690;
-  --accent-sage: #7fa57d;
-  --accent-sage-hover: #6a9068;
-  --accent-rose: #c88880;
-  --accent-amber: #c9a45d;
-  --accent-cyan: #5fa9b8;
-  --accent-cyan-deep: #4a8f9d;
-  --accent-mint-soft: #7fc9b6;
-  --accent-mint-dim: #5fb39a;
-  --border-subtle: #d9e0dc;
-  --nav-chrome: #1d1e1b;
-  --nav-chrome-text: #d8dcd5;
+  --text-primary:      #E6E6E2;
+  --text-secondary:    #CFCFC9;
+  --text-dim:          #9EA39B;
+
+  --accent-sage:       #A8BFA6;
+  --accent-sage-hover: #B7C9B5;
+  --accent-rose:       #e8a8a0;
+
+  --nav-chrome:          #111111;
+  --nav-chrome-text:     #E6E6E2;
+  --nav-chrome-muted:    rgba(207, 201, 201, 0.62);
+  --nav-chrome-border:   rgba(232, 237, 234, 0.10);
 }
 
 body {
@@ -98,40 +83,38 @@ body {
   font-family: var(--font-body), Inter, system-ui, sans-serif;
 }
 
-/* Satoshi first, DM Sans (--font-heading) as reliable fallback */
 .font-heading {
   font-family: 'Satoshi', var(--font-heading), Inter, system-ui, sans-serif;
 }
 
-/* Subtle film grain — surface depth without colour noise */
+/* Subtle film grain */
 body::after {
   content: '';
   position: fixed;
   inset: 0;
   z-index: 9999;
   pointer-events: none;
-  opacity: 0.022;
+  opacity: 0.018;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
   background-repeat: repeat;
   background-size: 200px;
   mix-blend-mode: overlay;
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   Sage surface — reversed scheme for Live Metrics + Value Split sections.
-   Every component that reads CSS vars inherits dark text automatically.
-   ───────────────────────────────────────────────────────────────────────────── */
+/* Telemetry / editorial inset — warm neutral, not sage fill */
+.telemetry-panel {
+  background: var(--surface-raised, var(--elevated));
+  border: 1px solid var(--border-subtle);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 12px 40px rgba(0, 0, 0, 0.18);
+}
 
-.sage-panel {
-  --background:    #A8BFA6;               /* full sage surface */
-  --surface:       rgba(168,191,166,0.94);
-  --elevated:      rgba(22,22,21,0.09);   /* subtle dark overlay for hover states */
-  --text-primary:  #161615;
-  --text-secondary:#2A2F28;
-  --text-dim:      #3E463B;
-  --border-subtle: rgba(22,22,21,0.20);
-  --accent-sage:   #2a3328;               /* dark icon/accent on sage bg */
-  --accent-sage-hover: #1e2620;
+.dark .telemetry-panel {
+  background: var(--surface-raised);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 16px 48px rgba(0, 0, 0, 0.35);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -154,7 +137,6 @@ body::after {
 .animate-node-b { animation: node-breathe 5.8s ease-in-out infinite 1.9s; }
 .animate-node-c { animation: node-breathe 7.1s ease-in-out infinite 0.7s; }
 
-/* Network map — city node ring breathing */
 @keyframes nmap-outer-glow {
   0%, 100% { opacity: 0.14; }
   50% { opacity: 0.32; }
@@ -171,7 +153,6 @@ body::after {
 .nmap-mid-pulse   { animation: nmap-mid-glow 3.5s ease-in-out infinite 0.4s; }
 .nmap-core-pulse  { animation: nmap-core-pulse 3.5s ease-in-out infinite 0.8s; }
 
-/* Network map — flowing route glow on city connections */
 @keyframes nmap-route-flow {
   0%   { stroke-dashoffset: 20; }
   100% { stroke-dashoffset: 0; }

@@ -121,20 +121,21 @@ export function NetworkMap({ className, activeMaterial = "All materials" }: Netw
       >
         <defs>
           <pattern id="nmap-grid" width="40" height="40" patternUnits="userSpaceOnUse">
-            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#2e3130" strokeWidth="0.45" />
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#2d2d2d" strokeWidth="0.45" />
           </pattern>
 
           {/* Edge-to-edge vignette */}
           <radialGradient id="nmap-vignette" cx="50%" cy="50%" r="60%">
-            <stop offset="10%" stopColor="#161615" stopOpacity="0" />
-            <stop offset="100%" stopColor="#161615" stopOpacity="0.92" />
+            <stop offset="10%" stopColor="#111111" stopOpacity="0" />
+            <stop offset="100%" stopColor="#111111" stopOpacity="0.92" />
           </radialGradient>
 
-          {/* Nairobi environmental haze */}
+          {/* Soft blue-sage focal bloom — map-only glow */}
           <radialGradient id="nmap-nairobi-haze" cx="268" cy="168" r="130" gradientUnits="userSpaceOnUse">
-            <stop offset="0%"   stopColor="#A8BFA6" stopOpacity="0.14" />
-            <stop offset="70%"  stopColor="#A8BFA6" stopOpacity="0.04" />
-            <stop offset="100%" stopColor="#A8BFA6" stopOpacity="0"    />
+            <stop offset="0%"   stopColor="#A7C7C4" stopOpacity="0.08" />
+            <stop offset="45%"  stopColor="#8FB2AE" stopOpacity="0.05" />
+            <stop offset="70%"  stopColor="#8FB2AE" stopOpacity="0.02" />
+            <stop offset="100%" stopColor="#8FB2AE" stopOpacity="0"    />
           </radialGradient>
 
           {/* City node glow filter */}
@@ -164,7 +165,7 @@ export function NetworkMap({ className, activeMaterial = "All materials" }: Netw
 
         {/* Ambient constellation dots — always visible, no filtering */}
         {AMBIENT_DOTS.map((d, i) => (
-          <circle key={i} cx={d.x} cy={d.y} r="1" fill="#A8BFA6" opacity="0.14" />
+          <circle key={i} cx={d.x} cy={d.y} r="1" fill="#9FBFBC" opacity="0.09" />
         ))}
 
         {/* Edges — three visual tiers */}
@@ -186,20 +187,20 @@ export function NetworkMap({ className, activeMaterial = "All materials" }: Netw
 
           if (!eitherVisible) {
             baseOpacity = 0.07;
-            stroke = "#3a3d3a";
+            stroke = "#3a3a3a";
             strokeWidth = 0.5;
           } else if (bothCity) {
             baseOpacity = 0.34;
-            stroke = "#A8BFA6";
+            stroke = "#A7ADA2";
             strokeWidth = 1.3;
           } else if (bothSite) {
             baseOpacity = 0.14;
-            stroke = "#88a086";
+            stroke = "#4d4d4d";
             strokeWidth = 0.55;
           } else {
             // city-site spoke
             baseOpacity = 0.22;
-            stroke = "#9ab098";
+            stroke = "#6b6b6b";
             strokeWidth = 0.75;
           }
 
@@ -229,9 +230,9 @@ export function NetworkMap({ className, activeMaterial = "All materials" }: Netw
               key={`flow-${a}-${b}`}
               x1={na.x} y1={na.y}
               x2={nb.x} y2={nb.y}
-              stroke="#A8BFA6"
+              stroke="#9FBFBC"
               strokeWidth="1.5"
-              opacity="0.40"
+              opacity="0.22"
               className="nmap-route-flow"
             />
           );
@@ -246,7 +247,7 @@ export function NetworkMap({ className, activeMaterial = "All materials" }: Netw
               cx={node.x}
               cy={node.y}
               r="2.2"
-              fill="#7a9078"
+              fill="#5a5a5a"
               opacity={visible ? "0.80" : "0.08"}
               style={{ transition: "opacity 0.4s" }}
             />
@@ -267,20 +268,20 @@ export function NetworkMap({ className, activeMaterial = "All materials" }: Netw
             >
               {/* Nairobi only: extra outermost static ring for stellar magnitude */}
               {isNairobi && (
-                <circle cx={node.x} cy={node.y} r="22" fill="none" stroke="#A8BFA6" strokeWidth="0.4" opacity="0.12" />
+                <circle cx={node.x} cy={node.y} r="22" fill="none" stroke="#A7C7C4" strokeWidth="0.4" opacity="0.12" />
               )}
               {/* Outer animated ring */}
-              <circle cx={node.x} cy={node.y} r={isNairobi ? 14 : 13} fill="none" stroke="#A8BFA6" strokeWidth="0.6" className="nmap-outer-pulse" />
+              <circle cx={node.x} cy={node.y} r={isNairobi ? 14 : 13} fill="none" stroke={isNairobi ? "#9FBFBC" : "#8a8d8a"} strokeWidth="0.6" className="nmap-outer-pulse" />
               {/* Mid animated ring */}
-              <circle cx={node.x} cy={node.y} r={isNairobi ? 7 : 6}  fill="none" stroke="#A8BFA6" strokeWidth="0.9" className="nmap-mid-pulse" />
+              <circle cx={node.x} cy={node.y} r={isNairobi ? 7 : 6}  fill="none" stroke={isNairobi ? "#A7C7C4" : "#8f9190"} strokeWidth="0.9" className="nmap-mid-pulse" />
               {/* Core dot */}
-              <circle cx={node.x} cy={node.y} r={isNairobi ? 3.5 : 2.8} fill="#A8BFA6" className="nmap-core-pulse" />
+              <circle cx={node.x} cy={node.y} r={isNairobi ? 3.5 : 2.8} fill={isNairobi ? "#8FB2AE" : "#9a9c9a"} className="nmap-core-pulse" />
               <text
                 x={node.x}
                 y={node.y - (isNairobi ? 20 : 18)}
                 textAnchor="middle"
                 fontSize={isNairobi ? "9" : "8"}
-                fill="#A8BFA6"
+                fill={isNairobi ? "#9FBFBC" : "#a9aea5"}
                 opacity={isNairobi ? "0.88" : "0.75"}
                 fontFamily="system-ui, sans-serif"
                 fontWeight="500"

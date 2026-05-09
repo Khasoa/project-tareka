@@ -1,39 +1,49 @@
+"use client";
+
 import type { ReactNode } from "react";
+
+import { useI18n } from "@/lib/i18n/i18n-provider";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // System Flow — three-step pipeline rendered directly on the page background.
-// No enclosing card; the flow sits flush as part of the Hero → Live Data
-// visual continuity. Stat chips live in LiveData (separate section).
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function SystemFlow() {
+  const { t } = useI18n();
+
   return (
     <div>
-      {/* Eyebrow row */}
       <div className="mb-10 flex items-center justify-between">
         <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-dim">
-          System flow
+          {t("landing.systemFlow.eyebrow")}
         </p>
         <span className="rounded-full border border-border/40 px-2.5 py-0.5 text-[10px] text-dim/60">
-          Preview
+          {t("landing.systemFlow.previewBadge")}
         </span>
       </div>
 
-      {/* Flow nodes + connectors */}
       <div className="flex items-start justify-between gap-1 sm:gap-2">
-        <FlowNode icon={<DropOffIcon />} label="Drop off"        sublabel="Materials received"  />
+        <FlowNode
+          icon={<DropOffIcon />}
+          label={t("landing.systemFlow.dropOff")}
+          sublabel={t("landing.systemFlow.dropOffSub")}
+        />
         <FlowConnector />
-        <FlowNode icon={<VerifyIcon />}  label="Verification"    sublabel="Operator sign-off"   />
+        <FlowNode
+          icon={<VerifyIcon />}
+          label={t("landing.systemFlow.verify")}
+          sublabel={t("landing.systemFlow.verifySub")}
+        />
         <FlowConnector />
-        <FlowNode icon={<ImpactIcon />}  label="Impact recorded" sublabel="Contribution logged" />
+        <FlowNode
+          icon={<ImpactIcon />}
+          label={t("landing.systemFlow.impact")}
+          sublabel={t("landing.systemFlow.impactSub")}
+        />
       </div>
     </div>
   );
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Sub-components
-// ─────────────────────────────────────────────────────────────────────────────
 
 function FlowNode({
   icon,
@@ -49,9 +59,7 @@ function FlowNode({
       <div className="flex h-10 w-10 items-center justify-center rounded-full border border-border/70 bg-background text-accent-sage transition-all duration-300 group-hover:border-accent-sage/40 group-hover:shadow-[0_0_22px_rgba(168,191,166,0.11)]">
         {icon}
       </div>
-      <p className="mt-3 text-[11px] font-semibold leading-tight text-foreground sm:text-xs">
-        {label}
-      </p>
+      <p className="mt-3 text-[11px] font-semibold leading-tight text-foreground sm:text-xs">{label}</p>
       <p className="mt-0.5 text-[10px] leading-snug text-dim">{sublabel}</p>
     </div>
   );
@@ -68,10 +76,6 @@ function FlowConnector() {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Icons
-// ─────────────────────────────────────────────────────────────────────────────
-
 function DropOffIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -85,7 +89,7 @@ function DropOffIcon() {
 function VerifyIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
       <path d="m9 12 2 2 4-4" />
     </svg>
   );
@@ -94,7 +98,8 @@ function VerifyIcon() {
 function ImpactIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-      <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+      <path d="M4 14.4C2.5 12.5 2 10.6 2 9c0-3.3 2.2-6 5.5-6 1.9 0 3.6.9 4.5 2.3C12.9 3.9 14.6 3 16.5 3 19.8 3 22 5.7 22 9c0 4.8-4.3 9-9 12-1.5 1-3.2 1.8-5 2.5" />
+      <path d="M12 22v-6" />
     </svg>
   );
 }

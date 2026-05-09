@@ -46,11 +46,32 @@ class DropoffResponse(BaseModel):
     model_config = {"from_attributes": False}
 
 
-class PaginatedDropoffsResponse(BaseModel):
-    items: list[DropoffResponse]
+class CompanyDropoffAdminResponse(DropoffResponse):
+    site_name: str
+    recycler_name: str
+    reward_type: str
+
+
+class PaginatedCompanyDropoffsResponse(BaseModel):
+    items: list[CompanyDropoffAdminResponse]
     limit: int
     offset: int
     count: int
+
+
+def dropoff_to_company_admin_response(
+    dropoff,
+    *,
+    site_name: str,
+    recycler_name: str,
+) -> CompanyDropoffAdminResponse:
+    base = dropoff_to_response(dropoff)
+    return CompanyDropoffAdminResponse(
+        **base.model_dump(),
+        site_name=site_name,
+        recycler_name=recycler_name,
+        reward_type=str(dropoff.reward_type),
+    )
 
 
 def reward_summary_from_dict(data: dict) -> RewardSummary:
@@ -59,6 +80,13 @@ def reward_summary_from_dict(data: dict) -> RewardSummary:
         kes_obligation=Decimal(data.get("kes_obligation", 0)),
         sats_pending=int(data.get("sats_pending", 0)),
     )
+
+
+class PaginatedDropoffsResponse(BaseModel):
+    items: list[DropoffResponse]
+    limit: int
+    offset: int
+    count: int
 
 
 def dropoff_to_response(

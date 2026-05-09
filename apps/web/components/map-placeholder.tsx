@@ -2,11 +2,30 @@ import type { HTMLAttributes } from "react";
 
 import { cn } from "@/lib/utils";
 
+import { DirectoryNetworkPanel } from "./directory-network-panel";
+
 export function MapPlaceholder({
   className,
   label = "Map preview",
+  variant = "default",
   ...props
-}: HTMLAttributes<HTMLDivElement> & { label?: string }) {
+}: HTMLAttributes<HTMLDivElement> & {
+  label?: string;
+  /** `network` — constellation / telemetry panel (directory-aligned). */
+  variant?: "default" | "network";
+}) {
+  if (variant === "network") {
+    return (
+      <div className={cn("flex flex-col gap-2", className)} {...props}>
+        <DirectoryNetworkPanel className="w-full flex-1" />
+        <p className="text-[10px] leading-snug text-dim">
+          Illustrative network — not live GPS.{" "}
+          <span className="text-secondary">{label}</span>
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div
       className={cn(

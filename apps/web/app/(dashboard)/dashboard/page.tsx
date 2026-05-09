@@ -6,6 +6,7 @@ import { useEffect } from "react";
 
 import { ActivityList, type ActivityItem } from "@/components/activity-list";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/card";
+import { DashboardAnchor } from "@/components/dashboard-anchor";
 import { ErrorState } from "@/components/error-state";
 import { KPIGrid } from "@/components/kpi-grid";
 import { StatCard, StatCardSkeleton } from "@/components/stat-card";
@@ -58,9 +59,9 @@ export default function DashboardPage() {
 
   if (!user) {
     return (
-      <div className="mx-auto max-w-3xl space-y-6">
+      <div className="mx-auto max-w-3xl space-y-4">
         <header>
-          <h1 className="font-heading text-2xl font-semibold tracking-tight">Recycler dashboard</h1>
+          <h1 className="font-heading text-xl font-semibold tracking-tight">Recycler dashboard</h1>
           <p className="mt-2 text-sm text-muted">
             Sign in on the API host to load your verified drop-offs and impact. This client uses
             HttpOnly cookies against{" "}
@@ -90,15 +91,19 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl space-y-8">
-      <div>
-        <h1 className="font-heading text-2xl font-semibold tracking-tight">Welcome back</h1>
-        <p className="mt-1 text-sm text-muted">
-          {user.fullName} · {user.isVerified ? "Verified recycler" : "Account pending verification"}
-        </p>
+    <div className="mx-auto max-w-6xl space-y-4">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h1 className="font-heading text-xl font-semibold tracking-tight">Welcome back</h1>
+          <p className="mt-0.5 text-sm text-muted">
+            {user.fullName} · {user.isVerified ? "Verified recycler" : "Account pending verification"}
+          </p>
+        </div>
       </div>
 
-      <Card className="border-accent-cyan/25 bg-accent-cyan/5">
+      <DashboardAnchor />
+
+      <Card className="border-border bg-surface p-4">
         <p className="text-sm font-medium text-foreground">Every recycle counts.</p>
         <p className="mt-1 text-sm text-muted">
           Your verified drop-offs build an auditable impact record. Appreciation tokens may apply
@@ -141,9 +146,9 @@ export default function DashboardPage() {
         </KPIGrid>
       ) : null}
 
-      <section className="space-y-3">
-        <CardHeader>
-          <CardTitle>Recent activity</CardTitle>
+      <section className="space-y-2">
+        <CardHeader className="mb-0">
+          <CardTitle className="text-base">Recent activity</CardTitle>
           <CardDescription>Latest verified drop-offs tied to your profile.</CardDescription>
         </CardHeader>
         {dropoffsQuery.isLoading ? (

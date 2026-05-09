@@ -21,7 +21,7 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "tareka",
+  title: "tareka.",
   description:
     "Track recycling. Prove impact. Every verified drop-off counts towards your impact record and appreciation tokens where applicable.",
 };

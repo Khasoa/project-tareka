@@ -6,7 +6,7 @@ export function KPIGrid({ children, className }: { children: ReactNode; classNam
   return (
     <div
       className={cn(
-        "grid gap-4 sm:grid-cols-2 xl:grid-cols-4",
+        "grid gap-3 sm:grid-cols-2 xl:grid-cols-4",
         className,
       )}
     >

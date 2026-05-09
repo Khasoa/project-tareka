@@ -11,13 +11,19 @@ from app.models.dropoff import Dropoff
 from app.models.payout_ledger import PayoutLedger
 from app.models.reward_transaction import RewardTransaction
 from app.models.sat_payout import SatPayout
-from app.utils.enums import PayoutStatus, RewardType, SatPayoutStatus
+from app.utils.enums import PayoutStatus, RewardType, SatPayoutStatus, SatsRewardRail
 from app.services.wallet_service import WalletService
 from app.utils.material_config import (
     calculate_tokens,
     kes_obligation_per_dropoff,
     sats_pending_per_dropoff,
 )
+
+
+def _coerce_sats_reward_rail(raw: str | None) -> str:
+    if raw and raw in {r.value for r in SatsRewardRail}:
+        return raw
+    return SatsRewardRail.unspecified.value
 
 
 def issue_reward(db: Session, dropoff: Dropoff, company: Company) -> dict[str, Decimal | int]:
@@ -61,12 +67,20 @@ def issue_reward(db: Session, dropoff: Dropoff, company: Company) -> dict[str, D
     if company.reward_sats_enabled:
         sats = sats_pending_per_dropoff(dropoff.material_type, dropoff.item_count)
         summary["sats_pending"] = sats
+        rail = _coerce_sats_reward_rail(getattr(company, "sats_reward_rail", None))
+        issuance_meta: dict[str, object] = {
+            "channel": "verified_dropoff",
+            "material_type": dropoff.material_type,
+            "item_count": dropoff.item_count,
+        }
         payout = SatPayout(
             id=str(uuid4()),
             user_id=dropoff.recycler_id,
             company_id=dropoff.company_id,
             dropoff_id=dropoff.id,
             sats_amount=sats,
+            payout_rail=rail,
+            issuance_metadata=issuance_meta,
             status=SatPayoutStatus.pending.value,
         )
         db.add(payout)
