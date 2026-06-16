@@ -173,7 +173,7 @@ function rewardRollup(items: CompanyDropoffAdminItem[]) {
 
 function PanelTitle({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-[10px] font-medium uppercase tracking-[0.1em] text-accent-sage">{children}</p>
+    <p className="text-[10px] font-medium uppercase tracking-[0.1em] text-accent-sage-ink">{children}</p>
   );
 }
 
@@ -325,7 +325,7 @@ export default function CompanyDashboardPage() {
     <div className="mx-auto max-w-6xl space-y-3 px-0.5 pb-6">
       <header className="flex flex-wrap items-start justify-between gap-2 border-b border-border pb-2">
         <div className="min-w-0">
-          <p className="text-[10px] font-medium uppercase tracking-[0.12em] text-accent-sage">
+          <p className="text-[10px] font-medium uppercase tracking-[0.12em] text-accent-sage-ink">
             Private impact &amp; operations
           </p>
           <h1 className="font-heading text-lg font-semibold tracking-tight text-foreground sm:text-xl">
@@ -383,7 +383,16 @@ export default function CompanyDashboardPage() {
           >
             Payout week
           </Button>
-          <Button href="/settings" variant="primary" size="sm" className="text-xs">
+          <Button
+            href={
+              user.role === "company_admin"
+                ? "/company/rewards"
+                : `/company/settings?companyId=${encodeURIComponent(companyId)}`
+            }
+            variant="primary"
+            size="sm"
+            className="text-xs"
+          >
             Programs
           </Button>
         </div>
@@ -392,12 +401,20 @@ export default function CompanyDashboardPage() {
       {/* Program / campaign strip — no separate campaign API */}
       <div className="rounded-lg border border-border bg-surface-raised/50 px-3 py-2">
         <p className="text-[11px] leading-snug text-secondary">
-          <span className="font-medium text-foreground">Contribution programs:</span> appreciation and KES flows follow
-          partner configuration and ledger rules. Connect reward policies under{" "}
-          <Link href="/settings" className="text-accent-sage hover:opacity-90">
-            Settings
-          </Link>
-          . No standalone campaign object is exposed in this API yet.
+          <span className="font-medium text-foreground">Recognition programmes:</span> appreciation flows follow your{" "}
+          {user.role === "company_admin" ? (
+            <Link href="/company/rewards" className="text-accent-sage-ink hover:opacity-90">
+              rewards workspace
+            </Link>
+          ) : (
+            <Link
+              href={`/company/settings?companyId=${encodeURIComponent(companyId)}`}
+              className="text-accent-sage-ink hover:opacity-90"
+            >
+              organisation settings
+            </Link>
+          )}{" "}
+          and ledger rules. No standalone campaign object is exposed in this API yet.
         </p>
       </div>
 
@@ -623,7 +640,7 @@ export default function CompanyDashboardPage() {
                     </td>
                     <td className="whitespace-nowrap px-2.5 py-1.5 uppercase text-dim">{r.reward_type}</td>
                     <td className="whitespace-nowrap px-2.5 py-1.5">
-                      <span className="rounded bg-accent-sage/10 px-1 py-0.5 text-[9px] font-medium text-accent-sage">
+                      <span className="rounded bg-accent-sage/10 px-1 py-0.5 text-[9px] font-medium text-accent-sage-ink">
                         Verified
                       </span>
                       <span className="ml-1 text-[9px] text-dim">{r.reward_issued ? "· issued" : "· pending"}</span>
@@ -642,7 +659,7 @@ export default function CompanyDashboardPage() {
       </p>
 
       <div className="flex flex-wrap gap-2 text-[11px]">
-        <Link href="/directory" className="text-accent-sage hover:opacity-85">
+        <Link href="/directory" className="text-accent-sage-ink hover:opacity-85">
           Network directory →
         </Link>
         {user.role === "platform_admin" ? <span className="text-dim">Platform · org {companyId}</span> : null}

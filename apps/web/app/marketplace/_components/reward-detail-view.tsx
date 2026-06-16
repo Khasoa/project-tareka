@@ -11,6 +11,7 @@ import { useI18n } from "@/lib/i18n/i18n-provider";
 import { queryKeys } from "@/lib/query-keys";
 import { cn } from "@/lib/utils";
 import { getMyRedemptions, getProductReward, redeemProduct } from "@/services/marketplace.service";
+import { getMockProductReward } from "@/lib/data/marketplace-mock";
 import { useAuthStore } from "@/store/auth";
 import type { ProductRewardDetail } from "@/types";
 
@@ -25,8 +26,17 @@ export function RewardDetailView() {
 
   const rewardQuery = useQuery({
     queryKey: queryKeys.productReward(id),
-    queryFn: () => getProductReward(id),
+    queryFn: async () => {
+      try {
+        return await getProductReward(id);
+      } catch {
+        const mock = getMockProductReward(id);
+        if (mock) return mock;
+        throw new Error("Reward not found");
+      }
+    },
     enabled: Boolean(id),
+    placeholderData: id.startsWith("mock-r-") ? getMockProductReward(id) ?? undefined : undefined,
   });
 
   const historyPreview = useQuery({
@@ -40,6 +50,7 @@ export function RewardDetailView() {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.productReward(id) });
       void queryClient.invalidateQueries({ queryKey: ["my-redemptions"] });
+      void queryClient.invalidateQueries({ queryKey: ["wallet-program"] });
     },
   });
 
@@ -86,7 +97,7 @@ export function RewardDetailView() {
 
   if (rewardQuery.isError) {
     return (
-      <div className="rounded-2xl border border-border bg-surface p-8 text-center telemetry-panel">
+      <div className="rounded-2xl p-8 text-center telemetry-panel">
         <p className="font-heading text-lg font-semibold text-foreground">Reward unavailable</p>
         <p className="mt-2 text-sm text-dim">It may be unpublished or pending human review.</p>
         <Link
@@ -116,7 +127,7 @@ export function RewardDetailView() {
       </nav>
 
       <div className="grid gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-start">
-        <div className="overflow-hidden rounded-2xl border border-border bg-surface telemetry-panel">
+        <div className="telemetry-panel overflow-hidden rounded-2xl">
           <div className="relative aspect-[4/3] bg-elevated">
             {r.image_url ? (
               // eslint-disable-next-line @next/next/no-img-element

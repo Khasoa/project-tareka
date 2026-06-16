@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function ForCompaniesPage() {
   return (
-    <PublicShell>
+    <PublicShell marketingAudience="companies">
       <ForCompaniesClient />
     </PublicShell>
   );

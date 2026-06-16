@@ -1,13 +1,26 @@
+"use client";
+
 import { cn } from "@/lib/utils";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Network Map v4 — Constellation
+// Network Map — Nairobi constellation.
 //
-// Visual language: distributed environmental intelligence, not routing paths.
-// Three edge tiers at dramatically different opacities create a star-chart
-// depth effect. Ambient dots provide the "stars between constellations" fill.
-// Nairobi is the central anchor with a triple-ring signature.
+// Node layout redesign: Nairobi sits at true centre (280, 190).
+// The four regional cities are placed at varied distances and angles
+// so the backbone forms an asymmetric star — closer to real geography
+// and more visually interesting than a rectangle:
+//
+//   Kiambu   NW  ~120° bearing, ~110px
+//   Thika    NE  ~050° bearing, ~135px
+//   Ngong    SW  ~225° bearing, ~120px
+//   Kitengela SE  ~155° bearing, ~130px
+//
+// Neighbourhood sites cluster around Nairobi at intermediate distances.
 // ─────────────────────────────────────────────────────────────────────────────
+
+const MAP_BG = "#0D0F10";
+const SAGE    = "#A1C998";
+const SAGE_LT = "#C2E0B8";
 
 interface MapNode {
   id: string;
@@ -19,82 +32,104 @@ interface MapNode {
 }
 
 const NODES: MapNode[] = [
-  // ── City anchors ──
-  { id: "nairobi",   x: 268, y: 168, label: "Nairobi",   tier: "city", materials: ["Plastic","Glass","Electronics","Metal","Paper","Textiles"] },
-  { id: "kiambu",    x: 232, y: 52,  label: "Kiambu",    tier: "city", materials: ["Plastic","Paper","Textiles"] },
-  { id: "thika",     x: 375, y: 35,  label: "Thika",     tier: "city", materials: ["Metal","Electronics","Plastic"] },
-  { id: "ngong",     x: 88,  y: 272, label: "Ngong",     tier: "city", materials: ["Glass","Paper","Textiles"] },
-  { id: "kitengela", x: 360, y: 308, label: "Kitengela", tier: "city", materials: ["Plastic","Metal","Glass"] },
+  // ── Hub ──────────────────────────────────────────────────────────────────
+  { id: "nairobi",    x: 280, y: 195, label: "Nairobi",    tier: "city",
+    materials: ["Plastic","Glass","Electronics","Metal","Paper","Textiles"] },
 
-  // ── Neighbourhood sites ──
-  { id: "westlands", x: 168, y: 118, label: "Westlands",  tier: "site", materials: ["Plastic","Glass","Electronics"] },
-  { id: "kilimani",  x: 198, y: 205, label: "Kilimani",   tier: "site", materials: ["Glass","Paper"] },
-  { id: "lavington", x: 135, y: 242, label: "Lavington",  tier: "site", materials: ["Textiles","Paper"] },
-  { id: "karen",     x: 108, y: 310, label: "Karen",      tier: "site", materials: ["Electronics","Textiles"] },
-  { id: "eastleigh", x: 368, y: 145, label: "Eastleigh",  tier: "site", materials: ["Metal","Plastic"] },
-  { id: "kasarani",  x: 382, y: 62,  label: "Kasarani",   tier: "site", materials: ["Plastic","Paper"] },
-  { id: "roysambu",  x: 298, y: 82,  label: "Roysambu",   tier: "site", materials: ["Plastic","Glass"] },
-  { id: "donholm",   x: 425, y: 175, label: "Donholm",    tier: "site", materials: ["Electronics"] },
-  { id: "embakasi",  x: 458, y: 242, label: "Embakasi",   tier: "site", materials: ["Metal","Plastic"] },
-  { id: "southb",    x: 318, y: 278, label: "South B",    tier: "site", materials: ["Plastic"] },
-  { id: "langata",   x: 225, y: 308, label: "Lang'ata",   tier: "site", materials: ["Glass","Textiles"] },
-  { id: "ruiru",     x: 438, y: 80,  label: "Ruiru",      tier: "site", materials: ["Plastic","Paper"] },
+  // ── Regional cities — varied angles & distances ───────────────────────────
+  // Kiambu: NNW, ~110 px
+  { id: "kiambu",    x: 170, y:  90, label: "Kiambu",    tier: "city",
+    materials: ["Plastic","Paper","Textiles"] },
+  // Thika: NNE, ~145 px (further — real distance is greater)
+  { id: "thika",     x: 400, y:  65, label: "Thika",     tier: "city",
+    materials: ["Metal","Electronics","Plastic"] },
+  // Ngong: WSW, ~130 px
+  { id: "ngong",     x: 115, y: 285, label: "Ngong",     tier: "city",
+    materials: ["Glass","Paper","Textiles"] },
+  // Kitengela: SSE, ~140 px
+  { id: "kitengela", x: 385, y: 315, label: "Kitengela", tier: "city",
+    materials: ["Plastic","Metal","Glass"] },
+
+  // ── Inner neighbourhood sites — orbit Nairobi at 60-90 px ────────────────
+  { id: "westlands", x: 192, y: 135, label: "Westlands",  tier: "site",
+    materials: ["Plastic","Glass","Electronics"] },
+  { id: "kilimani",  x: 210, y: 230, label: "Kilimani",   tier: "site",
+    materials: ["Glass","Paper"] },
+  { id: "lavington", x: 170, y: 270, label: "Lavington",  tier: "site",
+    materials: ["Textiles","Paper"] },
+  { id: "karen",     x: 175, y: 325, label: "Karen",      tier: "site",
+    materials: ["Electronics","Textiles"] },
+  { id: "eastleigh", x: 360, y: 140, label: "Eastleigh",  tier: "site",
+    materials: ["Metal","Plastic"] },
+  { id: "kasarani",  x: 358, y:  98, label: "Kasarani",   tier: "site",
+    materials: ["Plastic","Paper"] },
+  { id: "roysambu",  x: 308, y: 108, label: "Roysambu",   tier: "site",
+    materials: ["Plastic","Glass"] },
+  { id: "donholm",   x: 420, y: 200, label: "Donholm",    tier: "site",
+    materials: ["Electronics"] },
+  { id: "embakasi",  x: 448, y: 252, label: "Embakasi",   tier: "site",
+    materials: ["Metal","Plastic"] },
+  { id: "southb",    x: 328, y: 275, label: "South B",    tier: "site",
+    materials: ["Plastic"] },
+  { id: "langata",   x: 242, y: 308, label: "Lang'ata",   tier: "site",
+    materials: ["Glass","Textiles"] },
+  { id: "ruiru",     x: 448, y:  88, label: "Ruiru",      tier: "site",
+    materials: ["Plastic","Paper"] },
 ];
 
-// Ambient constellation dots — faint background "stars" with no data role
-const AMBIENT_DOTS: { x: number; y: number }[] = [
-  { x: 492, y: 108 }, { x: 512, y: 268 },
-  { x: 42,  y: 78  }, { x: 58,  y: 322 },
-  { x: 462, y: 40  }, { x: 20,  y: 188 },
-  { x: 315, y: 345 }, { x: 152, y: 352 },
-  { x: 534, y: 160 }, { x: 30,  y: 130 },
+// Ambient "stars" — scattered beyond the main cluster
+const AMBIENT: { x: number; y: number; r: number; o: number }[] = [
+  { x: 510, y: 80,  r: 1.2, o: 0.10 },
+  { x: 530, y: 200, r: 0.9, o: 0.07 },
+  { x: 505, y: 300, r: 1.0, o: 0.09 },
+  { x: 50,  y: 55,  r: 1.1, o: 0.08 },
+  { x: 30,  y: 160, r: 0.8, o: 0.06 },
+  { x: 60,  y: 335, r: 1.0, o: 0.08 },
+  { x: 480, y: 50,  r: 0.7, o: 0.06 },
+  { x: 80,  y: 380, r: 0.9, o: 0.07 },
+  { x: 320, y: 360, r: 1.1, o: 0.09 },
+  { x: 160, y: 370, r: 0.8, o: 0.06 },
+  { x: 22,  y: 90,  r: 1.0, o: 0.08 },
+  { x: 545, y: 140, r: 0.7, o: 0.05 },
 ];
 
-// ── Edge definitions ──
-// city-city  → flowing animated lines (constellation backbone)
-// city-site  → medium spokes
-// site-site  → faint triangulation mesh (the "constellation web")
+// Backbone + selective spokes (no dense mesh — keeps the star legible)
 const EDGES: [string, string][] = [
-  // City backbone — 6 triangulated connections
+  // City backbone
   ["nairobi",   "kiambu"],
+  ["nairobi",   "thika"],
   ["nairobi",   "ngong"],
   ["nairobi",   "kitengela"],
   ["kiambu",    "thika"],
-  ["thika",     "kitengela"],   // long NE→SE diagonal
-  ["ngong",     "kitengela"],   // southern arc
+  ["thika",     "kitengela"],
+  ["ngong",     "kitengela"],
 
-  // City-to-site spokes
+  // Nairobi hub spokes to inner sites
   ["nairobi",   "westlands"],
   ["nairobi",   "kilimani"],
   ["nairobi",   "eastleigh"],
   ["nairobi",   "roysambu"],
   ["nairobi",   "southb"],
-  ["kiambu",    "kasarani"],
+  ["nairobi",   "lavington"],
+
+  // Regional city connections to nearby sites
   ["kiambu",    "westlands"],
+  ["kiambu",    "kasarani"],
   ["thika",     "kasarani"],
   ["thika",     "ruiru"],
+  ["thika",     "eastleigh"],
   ["ngong",     "lavington"],
   ["ngong",     "karen"],
-  ["kitengela", "embakasi"],
   ["kitengela", "southb"],
+  ["kitengela", "embakasi"],
   ["kitengela", "langata"],
 
-  // Site-site triangulation mesh
+  // Inner site cross-links (sparse — only legible pairs)
   ["westlands", "roysambu"],
-  ["westlands", "kilimani"],
-  ["roysambu",  "eastleigh"],
-  ["roysambu",  "kasarani"],
   ["eastleigh", "donholm"],
-  ["eastleigh", "kasarani"],
-  ["kasarani",  "ruiru"],
   ["donholm",   "embakasi"],
-  ["kilimani",  "lavington"],
-  ["kilimani",  "southb"],
   ["kilimani",  "langata"],
-  ["lavington", "karen"],
   ["karen",     "langata"],
-  ["langata",   "southb"],
-  ["southb",    "embakasi"],
 ];
 
 function getNode(id: string): MapNode | undefined {
@@ -111,36 +146,43 @@ interface NetworkMapProps {
 }
 
 export function NetworkMap({ className, activeMaterial = "All materials" }: NetworkMapProps) {
+  const nairobi = getNode("nairobi")!;
+  const regionalCities = ["kiambu", "thika", "ngong", "kitengela"];
+
   return (
-    <div className={cn("relative overflow-hidden rounded-xl bg-background", className)}>
+    <div className={cn("relative overflow-hidden rounded-xl", className)}
+      style={{ background: MAP_BG }}>
       <svg
-        viewBox="0 0 560 360"
+        viewBox="0 0 560 400"
         className="h-full w-full"
         role="img"
         aria-label="Illustrative constellation map of Nairobi-region collection network"
       >
         <defs>
-          <pattern id="nmap-grid" width="40" height="40" patternUnits="userSpaceOnUse">
-            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#2d2d2d" strokeWidth="0.45" />
-          </pattern>
-
           {/* Edge-to-edge vignette */}
-          <radialGradient id="nmap-vignette" cx="50%" cy="50%" r="60%">
-            <stop offset="10%" stopColor="#111111" stopOpacity="0" />
-            <stop offset="100%" stopColor="#111111" stopOpacity="0.92" />
+          <radialGradient id="nmap-vignette" cx="50%" cy="50%" r="55%">
+            <stop offset="20%" stopColor={MAP_BG} stopOpacity="0" />
+            <stop offset="100%" stopColor={MAP_BG} stopOpacity="0.94" />
           </radialGradient>
 
-          {/* Soft blue-sage focal bloom — map-only glow */}
-          <radialGradient id="nmap-nairobi-haze" cx="268" cy="168" r="130" gradientUnits="userSpaceOnUse">
-            <stop offset="0%"   stopColor="#A7C7C4" stopOpacity="0.08" />
-            <stop offset="45%"  stopColor="#8FB2AE" stopOpacity="0.05" />
-            <stop offset="70%"  stopColor="#8FB2AE" stopOpacity="0.02" />
-            <stop offset="100%" stopColor="#8FB2AE" stopOpacity="0"    />
+          {/* Nairobi haze — large soft bloom */}
+          <radialGradient id="nmap-hub-bloom"
+            cx={nairobi.x} cy={nairobi.y} r="160" gradientUnits="userSpaceOnUse">
+            <stop offset="0%"   stopColor={SAGE} stopOpacity="0.16" />
+            <stop offset="35%"  stopColor={SAGE} stopOpacity="0.08" />
+            <stop offset="65%"  stopColor={SAGE} stopOpacity="0.03" />
+            <stop offset="100%" stopColor={SAGE} stopOpacity="0" />
           </radialGradient>
 
-          {/* City node glow filter */}
-          <filter id="nmap-glow" x="-110%" y="-110%" width="320%" height="320%">
-            <feGaussianBlur stdDeviation="7.5" result="blur" />
+          {/* Fork blur — wide soft glow under backbone lines */}
+          <filter id="nmap-fork-blur" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="18" result="blur" />
+            <feMerge><feMergeNode in="blur" /></feMerge>
+          </filter>
+
+          {/* City node glow */}
+          <filter id="nmap-glow" x="-120%" y="-120%" width="340%" height="340%">
+            <feGaussianBlur stdDeviation="7" result="blur" />
             <feMerge>
               <feMergeNode in="blur" />
               <feMergeNode in="SourceGraphic" />
@@ -148,8 +190,8 @@ export function NetworkMap({ className, activeMaterial = "All materials" }: Netw
           </filter>
 
           {/* Nairobi — stronger dedicated glow */}
-          <filter id="nmap-glow-nb" x="-150%" y="-150%" width="400%" height="400%">
-            <feGaussianBlur stdDeviation="10" result="blur" />
+          <filter id="nmap-glow-nb" x="-160%" y="-160%" width="420%" height="420%">
+            <feGaussianBlur stdDeviation="12" result="blur" />
             <feMerge>
               <feMergeNode in="blur" />
               <feMergeNode in="SourceGraphic" />
@@ -157,135 +199,154 @@ export function NetworkMap({ className, activeMaterial = "All materials" }: Netw
           </filter>
         </defs>
 
-        {/* Grid */}
-        <rect width="560" height="360" fill="url(#nmap-grid)" opacity="0.70" />
+        {/* Base fill */}
+        <rect width="560" height="400" fill={MAP_BG} />
 
-        {/* Nairobi environmental haze */}
-        <rect width="560" height="360" fill="url(#nmap-nairobi-haze)" />
+        {/* Hub bloom */}
+        <ellipse
+          cx={nairobi.x} cy={nairobi.y}
+          rx="170" ry="155"
+          fill="url(#nmap-hub-bloom)"
+        />
 
-        {/* Ambient constellation dots — always visible, no filtering */}
-        {AMBIENT_DOTS.map((d, i) => (
-          <circle key={i} cx={d.x} cy={d.y} r="1" fill="#9FBFBC" opacity="0.09" />
+        {/* Ambient star field */}
+        {AMBIENT.map((d, i) => (
+          <circle key={i} cx={d.x} cy={d.y} r={d.r} fill={SAGE} opacity={d.o} />
         ))}
 
-        {/* Edges — three visual tiers */}
+        {/* ── Fork glow — wide blurred lines under the backbone ── */}
+        <g filter="url(#nmap-fork-blur)" aria-hidden>
+          {regionalCities.map((id) => {
+            const node = getNode(id);
+            if (!node) return null;
+            const vis = nodeVisible(node, activeMaterial);
+            return (
+              <line
+                key={`fork-${id}`}
+                x1={nairobi.x} y1={nairobi.y}
+                x2={node.x} y2={node.y}
+                stroke={SAGE_LT}
+                strokeWidth="12"
+                strokeLinecap="round"
+                opacity={vis ? 0.30 : 0.04}
+                style={{ transition: "opacity 0.4s" }}
+              />
+            );
+          })}
+        </g>
+
+        {/* ── Edges ── */}
         {EDGES.map(([a, b]) => {
           const na = getNode(a);
           const nb = getNode(b);
           if (!na || !nb) return null;
-
           const visA = nodeVisible(na, activeMaterial);
           const visB = nodeVisible(nb, activeMaterial);
-          const eitherVisible = visA || visB;
-          const bothCity  = na.tier === "city" && nb.tier === "city";
-          const bothSite  = na.tier === "site" && nb.tier === "site";
+          const eitherVis = visA || visB;
+          const bothCity = na.tier === "city" && nb.tier === "city";
+          const hubSpoke = na.id === "nairobi" || nb.id === "nairobi";
 
-          // Opacity tiers: backbone > spoke > mesh
-          let baseOpacity: number;
-          let stroke: string;
-          let strokeWidth: number;
+          let opacity: number, stroke: string, width: number;
 
-          if (!eitherVisible) {
-            baseOpacity = 0.07;
-            stroke = "#3a3a3a";
-            strokeWidth = 0.5;
+          if (!eitherVis) {
+            opacity = 0.06; stroke = "#3a3a3a"; width = 0.5;
           } else if (bothCity) {
-            baseOpacity = 0.34;
-            stroke = "#A7ADA2";
-            strokeWidth = 1.3;
-          } else if (bothSite) {
-            baseOpacity = 0.14;
-            stroke = "#4d4d4d";
-            strokeWidth = 0.55;
+            opacity = 0.55; stroke = SAGE; width = 1.4;
+          } else if (hubSpoke) {
+            opacity = 0.20; stroke = "#868686"; width = 0.80;
           } else {
-            // city-site spoke
-            baseOpacity = 0.22;
-            stroke = "#6b6b6b";
-            strokeWidth = 0.75;
+            opacity = 0.13; stroke = "#5a5a5a"; width = 0.55;
           }
 
           return (
-            <line
-              key={`${a}-${b}`}
-              x1={na.x} y1={na.y}
-              x2={nb.x} y2={nb.y}
-              stroke={stroke}
-              strokeWidth={strokeWidth}
-              opacity={baseOpacity}
+            <line key={`${a}-${b}`}
+              x1={na.x} y1={na.y} x2={nb.x} y2={nb.y}
+              stroke={stroke} strokeWidth={width} opacity={opacity}
               style={{ transition: "opacity 0.4s" }}
             />
           );
         })}
 
-        {/* Flowing animated overlay — city-to-city backbone only */}
+        {/* ── Animated flow on city backbone ── */}
         {EDGES.map(([a, b]) => {
           const na = getNode(a);
           const nb = getNode(b);
           if (!na || !nb) return null;
           if (na.tier !== "city" || nb.tier !== "city") return null;
-          const visible = nodeVisible(na, activeMaterial) && nodeVisible(nb, activeMaterial);
-          if (!visible) return null;
+          if (!nodeVisible(na, activeMaterial) || !nodeVisible(nb, activeMaterial)) return null;
           return (
-            <line
-              key={`flow-${a}-${b}`}
-              x1={na.x} y1={na.y}
-              x2={nb.x} y2={nb.y}
-              stroke="#9FBFBC"
-              strokeWidth="1.5"
-              opacity="0.22"
+            <line key={`flow-${a}-${b}`}
+              x1={na.x} y1={na.y} x2={nb.x} y2={nb.y}
+              stroke={SAGE} strokeWidth="1.6" opacity="0.35"
               className="nmap-route-flow"
             />
           );
         })}
 
-        {/* Site-tier nodes */}
-        {NODES.filter((n) => n.tier === "site").map((node) => {
-          const visible = nodeVisible(node, activeMaterial);
-          return (
-            <circle
-              key={node.id}
-              cx={node.x}
-              cy={node.y}
-              r="2.2"
-              fill="#5a5a5a"
-              opacity={visible ? "0.80" : "0.08"}
-              style={{ transition: "opacity 0.4s" }}
-            />
-          );
-        })}
+        {/* ── Site-tier nodes ── */}
+        {NODES.filter((n) => n.tier === "site").map((node) => (
+          <circle key={node.id}
+            cx={node.x} cy={node.y} r="2.4"
+            fill="#5e5e5e"
+            opacity={nodeVisible(node, activeMaterial) ? "0.85" : "0.08"}
+            style={{ transition: "opacity 0.4s" }}
+          />
+        ))}
 
-        {/* City-tier nodes — breathing rings */}
+        {/* ── City-tier nodes with pulsing rings ── */}
         {NODES.filter((n) => n.tier === "city").map((node) => {
           const visible = nodeVisible(node, activeMaterial);
           const isNairobi = node.id === "nairobi";
-
           return (
-            <g
-              key={node.id}
+            <g key={node.id}
               filter={visible ? (isNairobi ? "url(#nmap-glow-nb)" : "url(#nmap-glow)") : undefined}
-              opacity={visible ? "1" : "0.08"}
-              style={{ transition: "opacity 0.4s" }}
-            >
-              {/* Nairobi only: extra outermost static ring for stellar magnitude */}
+              opacity={visible ? "1" : "0.07"}
+              style={{ transition: "opacity 0.4s" }}>
+
               {isNairobi && (
-                <circle cx={node.x} cy={node.y} r="22" fill="none" stroke="#A7C7C4" strokeWidth="0.4" opacity="0.12" />
+                <>
+                  {/* Outer static rings for stellar magnitude */}
+                  <circle cx={node.x} cy={node.y} r="32" fill="none"
+                    stroke={SAGE} strokeWidth="0.4" opacity="0.12" />
+                  <circle cx={node.x} cy={node.y} r="24" fill="none"
+                    stroke={SAGE} strokeWidth="0.45" opacity="0.18" />
+                </>
               )}
-              {/* Outer animated ring */}
-              <circle cx={node.x} cy={node.y} r={isNairobi ? 14 : 13} fill="none" stroke={isNairobi ? "#9FBFBC" : "#8a8d8a"} strokeWidth="0.6" className="nmap-outer-pulse" />
-              {/* Mid animated ring */}
-              <circle cx={node.x} cy={node.y} r={isNairobi ? 7 : 6}  fill="none" stroke={isNairobi ? "#A7C7C4" : "#8f9190"} strokeWidth="0.9" className="nmap-mid-pulse" />
+
+              {/* Animated outer ring */}
+              <circle cx={node.x} cy={node.y}
+                r={isNairobi ? 16 : 11}
+                fill="none"
+                stroke={isNairobi ? SAGE : "#7a7d7a"}
+                strokeWidth="0.7"
+                className="nmap-outer-pulse"
+              />
+              {/* Animated mid ring */}
+              <circle cx={node.x} cy={node.y}
+                r={isNairobi ? 8 : 5.5}
+                fill="none"
+                stroke={isNairobi ? SAGE_LT : "#8f9190"}
+                strokeWidth="0.9"
+                className="nmap-mid-pulse"
+              />
               {/* Core dot */}
-              <circle cx={node.x} cy={node.y} r={isNairobi ? 3.5 : 2.8} fill={isNairobi ? "#8FB2AE" : "#9a9c9a"} className="nmap-core-pulse" />
+              <circle cx={node.x} cy={node.y}
+                r={isNairobi ? 3.8 : 2.6}
+                fill={isNairobi ? SAGE_LT : "#9a9c9a"}
+                className="nmap-core-pulse"
+              />
+
+              {/* Label */}
               <text
                 x={node.x}
-                y={node.y - (isNairobi ? 20 : 18)}
+                y={node.y - (isNairobi ? 22 : 17)}
                 textAnchor="middle"
-                fontSize={isNairobi ? "9" : "8"}
-                fill={isNairobi ? "#9FBFBC" : "#a9aea5"}
-                opacity={isNairobi ? "0.88" : "0.75"}
+                fontSize={isNairobi ? "9.5" : "7.5"}
+                fill={isNairobi ? SAGE : "#a9aea5"}
+                opacity={isNairobi ? "0.95" : "0.72"}
                 fontFamily="system-ui, sans-serif"
                 fontWeight="500"
-                letterSpacing="0.025em"
+                letterSpacing="0.03em"
               >
                 {node.label}
               </text>
@@ -293,8 +354,8 @@ export function NetworkMap({ className, activeMaterial = "All materials" }: Netw
           );
         })}
 
-        {/* Vignette — rendered last */}
-        <rect width="560" height="360" fill="url(#nmap-vignette)" />
+        {/* Vignette last */}
+        <rect width="560" height="400" fill="url(#nmap-vignette)" />
       </svg>
     </div>
   );

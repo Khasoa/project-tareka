@@ -9,8 +9,8 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default: "border-border bg-elevated text-muted",
-        verified: "border-accent-sage/40 bg-accent-sage/10 text-accent-sage",
-        sage: "border-accent-sage/40 bg-accent-sage/10 text-accent-sage",
+        verified: "border-accent-sage/40 bg-accent-sage/10 text-accent-sage-ink",
+        sage: "border-accent-sage/40 bg-accent-sage/10 text-accent-sage-ink",
         rose: "border-accent-rose/40 bg-accent-rose/10 text-accent-rose",
         outline: "border-border text-muted",
       },

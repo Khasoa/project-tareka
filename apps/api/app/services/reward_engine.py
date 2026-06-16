@@ -8,16 +8,20 @@ from sqlalchemy.orm import Session
 
 from app.models.company import Company
 from app.models.dropoff import Dropoff
+from app.models.user import User
 from app.models.payout_ledger import PayoutLedger
 from app.models.reward_transaction import RewardTransaction
 from app.models.sat_payout import SatPayout
 from app.utils.enums import PayoutStatus, RewardType, SatPayoutStatus, SatsRewardRail
-from app.services.wallet_service import WalletService
-from app.utils.material_config import (
-    calculate_tokens,
-    kes_obligation_per_dropoff,
-    sats_pending_per_dropoff,
+from app.services.reward_programme_service import (
+    compute_dropoff_sats,
+    compute_dropoff_tokens,
+    merge_reward_programme_config,
+    programme_blocks_financial_recognition,
+    sync_company_reward_booleans,
 )
+from app.services.wallet_service import WalletService
+from app.utils.material_config import kes_obligation_per_dropoff
 
 
 def _coerce_sats_reward_rail(raw: str | None) -> str:
@@ -35,22 +39,28 @@ def issue_reward(db: Session, dropoff: Dropoff, company: Company) -> dict[str, D
     }
     wallet_service = WalletService(db)
 
-    if company.reward_tokens_enabled:
-        tokens = _token_amount_for_dropoff(dropoff, company)
-        summary["tokens"] = tokens
-        wallet = wallet_service.create_wallet_if_missing(dropoff.recycler_id, dropoff.company_id)
-        wallet_service.add_tokens(wallet, tokens, dropoff.id)
-        txn = RewardTransaction(
-            id=str(uuid4()),
-            wallet_id=wallet.id,
-            dropoff_id=dropoff.id,
-            reward_type=RewardType.tokens.value,
-            amount=tokens,
-            description="Drop-off token reward",
-        )
-        db.add(txn)
+    cfg = merge_reward_programme_config(company.reward_programme_config)
+    sync_company_reward_booleans(company, cfg)
+    recycler = db.get(User, dropoff.recycler_id)
+    blocked = programme_blocks_financial_recognition(cfg, recycler)
 
-    if company.reward_kes_enabled:
+    if company.reward_tokens_enabled and not blocked:
+        tokens = compute_dropoff_tokens(db, dropoff, cfg)
+        summary["tokens"] = tokens
+        if tokens > 0:
+            wallet = wallet_service.create_wallet_if_missing(dropoff.recycler_id, dropoff.company_id)
+            wallet_service.add_tokens(wallet, tokens, dropoff.id)
+            txn = RewardTransaction(
+                id=str(uuid4()),
+                wallet_id=wallet.id,
+                dropoff_id=dropoff.id,
+                reward_type=RewardType.tokens.value,
+                amount=tokens,
+                description="Verified participation appreciation tokens",
+            )
+            db.add(txn)
+
+    if company.reward_kes_enabled and not blocked:
         kes = kes_obligation_per_dropoff(dropoff.material_type, dropoff.item_count)
         summary["kes_obligation"] = kes
         due = datetime.now(timezone.utc) + timedelta(days=7)
@@ -64,38 +74,31 @@ def issue_reward(db: Session, dropoff: Dropoff, company: Company) -> dict[str, D
         )
         db.add(ledger)
 
-    if company.reward_sats_enabled:
-        sats = sats_pending_per_dropoff(dropoff.material_type, dropoff.item_count)
+    if company.reward_sats_enabled and not blocked:
+        sats = compute_dropoff_sats(dropoff, company, cfg)
         summary["sats_pending"] = sats
-        rail = _coerce_sats_reward_rail(getattr(company, "sats_reward_rail", None))
-        issuance_meta: dict[str, object] = {
-            "channel": "verified_dropoff",
-            "material_type": dropoff.material_type,
-            "item_count": dropoff.item_count,
-        }
-        payout = SatPayout(
-            id=str(uuid4()),
-            user_id=dropoff.recycler_id,
-            company_id=dropoff.company_id,
-            dropoff_id=dropoff.id,
-            sats_amount=sats,
-            payout_rail=rail,
-            issuance_metadata=issuance_meta,
-            status=SatPayoutStatus.pending.value,
-        )
-        db.add(payout)
+        if sats > 0:
+            rail = _coerce_sats_reward_rail(getattr(company, "sats_reward_rail", None))
+            issuance_meta: dict[str, object] = {
+                "channel": "verified_dropoff",
+                "material_type": dropoff.material_type,
+                "item_count": dropoff.item_count,
+            }
+            payout = SatPayout(
+                id=str(uuid4()),
+                user_id=dropoff.recycler_id,
+                company_id=dropoff.company_id,
+                dropoff_id=dropoff.id,
+                sats_amount=sats,
+                payout_rail=rail,
+                issuance_metadata=issuance_meta,
+                status=SatPayoutStatus.pending.value,
+            )
+            db.add(payout)
 
     _set_dropoff_reward_denormalized(dropoff, company, summary)
     dropoff.reward_issued = True
     return summary
-
-
-def _token_amount_for_dropoff(dropoff: Dropoff, company: Company) -> Decimal:
-    """Single source of truth for token rewards (material + count + optional company multipliers)."""
-    multis = getattr(company, "token_reward_multipliers", None)
-    if not isinstance(multis, dict):
-        multis = None
-    return calculate_tokens(dropoff.material_type, dropoff.item_count, multis)
 
 
 def _set_dropoff_reward_denormalized(

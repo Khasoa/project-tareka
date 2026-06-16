@@ -12,12 +12,13 @@ class DropoffConfirmRequest(BaseModel):
     item_count: int = Field(ge=1, le=10_000)
     recycler_id: str | None = Field(default=None, max_length=36)
     recycler_phone: str | None = Field(default=None, max_length=30)
+    recycler_email: str | None = Field(default=None, max_length=255)
     client_reference_id: str | None = Field(default=None, max_length=128)
 
     @model_validator(mode="after")
     def require_recycler_identifier(self) -> "DropoffConfirmRequest":
-        if not self.recycler_id and not self.recycler_phone:
-            raise ValueError("recycler_id or recycler_phone is required")
+        if not self.recycler_id and not self.recycler_phone and not self.recycler_email:
+            raise ValueError("recycler_id, recycler_phone, or recycler_email is required")
         return self
 
 

@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
-
-import { CompanyRequestAccessForm } from "../request-form";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Request company access — tareka.",
-  description: "Request verified partner access for your organisation.",
 };
 
-export default function CompanyRequestAccessPage() {
-  return <CompanyRequestAccessForm />;
+/** Legacy URL — canonical path is `/company/request-access`. */
+export default function LegacyCompanyRequestRedirect() {
+  redirect("/company/request-access");
 }

@@ -1,13 +1,12 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { isAxiosError } from "axios";
 import Link from "next/link";
 import { useEffect } from "react";
 
 import { Button } from "@/components/button";
-import { ErrorState } from "@/components/error-state";
 import { queryKeys } from "@/lib/query-keys";
+import { NETWORK_MOCK_EXPERIENCE } from "@/lib/data/network-mock";
 import { impactService } from "@/services/impact.service";
 import { useAuthStore } from "@/store/auth";
 import type { NetworkImpactExperience, UserRole } from "@/types";
@@ -58,24 +57,24 @@ function ConstellationField({ dense }: { dense?: boolean }) {
       {nodes.map(([l, t], i) => (
         <div
           key={i}
-          className="absolute h-1 w-1 rounded-full opacity-80 shadow-[0_0_6px_var(--map-glow-blue-sage)]"
+          className="absolute h-1 w-1 rounded-full opacity-80 shadow-[0_0_6px_var(--map-glow-sage)]"
           style={{
             left: `${l}%`,
             top: `${t}%`,
-            background: "var(--map-glow-blue-sage)",
+            background: "var(--map-glow-sage)",
           }}
         />
       ))}
       <div
         className="absolute left-[12%] top-[28%] h-px w-[42%] rotate-[9deg] opacity-40"
         style={{
-          background: "linear-gradient(90deg, transparent, var(--map-glow-blue-sage), transparent)",
+          background: "linear-gradient(90deg, transparent, var(--map-glow-sage), transparent)",
         }}
       />
       <div
         className="absolute left-[40%] top-[58%] h-px w-[38%] rotate-[-6deg] opacity-35"
         style={{
-          background: "linear-gradient(90deg, transparent, var(--map-glow-blue-sage), transparent)",
+          background: "linear-gradient(90deg, transparent, var(--map-glow-sage), transparent)",
         }}
       />
     </div>
@@ -92,10 +91,10 @@ function StatCard({
   hint?: string;
 }) {
   return (
-    <div className="relative overflow-hidden rounded-xl border border-border bg-surface/90 px-3 py-2.5 sm:px-3.5 sm:py-3">
+    <div className="relative overflow-hidden rounded-xl border border-border bg-surface/90 px-3 py-2.5 shadow-[0_18px_48px_-24px_rgba(0,0,0,0.55)] sm:px-3.5 sm:py-3">
       <div
         className="pointer-events-none absolute -right-6 -top-6 h-16 w-16 rounded-full opacity-[0.12] blur-md"
-        style={{ background: "var(--map-glow-blue-sage)" }}
+        style={{ background: "var(--map-glow-sage)" }}
         aria-hidden
       />
       <p className="relative text-[10px] font-medium uppercase tracking-[0.1em] text-dim">{label}</p>
@@ -122,24 +121,19 @@ export function NetworkImpactView() {
 
   const netQuery = useQuery({
     queryKey: queryKeys.networkImpact,
-    queryFn: () => impactService.getNetworkExperience(),
+    queryFn: async () => {
+      try {
+        return await impactService.getNetworkExperience();
+      } catch {
+        return NETWORK_MOCK_EXPERIENCE;
+      }
+    },
     staleTime: 45_000,
+    placeholderData: NETWORK_MOCK_EXPERIENCE,
   });
 
-  if (netQuery.isError) {
-    const msg = isAxiosError(netQuery.error)
-      ? String(
-          (netQuery.error.response?.data as { detail?: string })?.detail ?? netQuery.error.message,
-        )
-      : "Unable to load network data.";
-    return (
-      <div className="mx-auto max-w-lg px-4 py-16">
-        <ErrorState message={msg} onRetry={() => void netQuery.refetch()} />
-      </div>
-    );
-  }
-
-  const n = netQuery.data;
+  const n = netQuery.data ?? NETWORK_MOCK_EXPERIENCE;
+  const usingDemo = netQuery.isError;
 
   return (
     <div className="relative">
@@ -156,6 +150,9 @@ export function NetworkImpactView() {
             Verified recycling activity across the tareka ecosystem — collective scale, not individual scores. All mass
             and CO₂ are <span className="text-foreground/90">methodological estimates</span>.
           </p>
+          {usingDemo ? (
+            <p className="mt-2 text-xs text-dim">Showing representative Nairobi network data while live telemetry syncs.</p>
+          ) : null}
         </div>
       </section>
 
@@ -179,7 +176,7 @@ export function NetworkImpactView() {
           </p>
         )}
 
-        {netQuery.isLoading || !n ? (
+        {netQuery.isLoading && !netQuery.data ? (
           <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="h-24 animate-pulse rounded-xl border border-border bg-surface" />

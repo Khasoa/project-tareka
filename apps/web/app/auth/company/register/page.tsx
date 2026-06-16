@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 
 /** Company onboarding — alias to request-access flow */
 export default function CompanyRegisterRedirectPage() {
-  redirect("/auth/company/request");
+  redirect("/company/request-access");
 }

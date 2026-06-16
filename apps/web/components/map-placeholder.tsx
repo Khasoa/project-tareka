@@ -1,3 +1,5 @@
+"use client";
+
 import type { HTMLAttributes } from "react";
 
 import { cn } from "@/lib/utils";
@@ -11,7 +13,6 @@ export function MapPlaceholder({
   ...props
 }: HTMLAttributes<HTMLDivElement> & {
   label?: string;
-  /** `network` — constellation / telemetry panel (directory-aligned). */
   variant?: "default" | "network";
 }) {
   if (variant === "network") {

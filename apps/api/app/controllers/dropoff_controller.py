@@ -25,7 +25,7 @@ router = APIRouter(prefix="/dropoffs", tags=["dropoffs"])
 def confirm_dropoff_endpoint(
     data: DropoffConfirmRequest,
     db: Session = Depends(get_db),
-    operator: User = Depends(require_role("operator")),
+    operator: User = Depends(require_role("operator", "company_admin")),
 ):
     result = confirm_dropoff(db, operator, data)
     if result.cache_needs_refresh:

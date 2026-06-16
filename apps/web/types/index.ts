@@ -184,6 +184,32 @@ export interface PaginatedCompanyDropoffs {
   count: number;
 }
 
+/** Operator intake helpers */
+export interface RecyclerSearchHit {
+  id: string;
+  full_name: string;
+  phone: string | null;
+  email: string | null;
+}
+
+export interface SiteRewardContext {
+  site_id: string;
+  company_id: string;
+  reward_tokens_enabled: boolean;
+  reward_kes_enabled: boolean;
+  reward_sats_enabled: boolean;
+}
+
+export interface DropoffConfirmPayload {
+  site_id: string;
+  material_type: string;
+  item_count: number;
+  recycler_id?: string | null;
+  recycler_phone?: string | null;
+  recycler_email?: string | null;
+  client_reference_id?: string | null;
+}
+
 /** GET /platform/operations (platform_admin only). */
 export interface PlatformOperationsSnapshot {
   generated_at: string;
@@ -436,4 +462,43 @@ export interface RecyclerSatsParticipationSummary {
 
 export interface SatsRewardRailsReference {
   rails: string[];
+}
+
+export type CompanyRewardMode =
+  | "tareka_tokens"
+  | "sats_rewards"
+  | "discount_vouchers"
+  | "marketplace_redemption_only"
+  | "recognition_only";
+
+export interface CompanyMaterialRewardRule {
+  tokens_per_kg?: string | null;
+  sats_per_kg?: string | null;
+  min_threshold_kg?: string | null;
+  monthly_cap_tokens?: number | null;
+}
+
+export interface CompanyRewardRedemptionSettings {
+  allow_marketplace_redemption: boolean;
+  allow_sats_payout: boolean;
+  minimum_balance_tokens: number;
+  pending_verification_required: boolean;
+}
+
+export interface CompanyRewardProgramme {
+  programme_enabled: boolean;
+  reward_mode: CompanyRewardMode;
+  material_rules: Record<string, CompanyMaterialRewardRule>;
+  redemption: CompanyRewardRedemptionSettings;
+  reward_tokens_enabled: boolean;
+  reward_sats_enabled: boolean;
+  reward_kes_enabled: boolean;
+}
+
+export interface CompanyRewardPreviewResult {
+  material_type: string;
+  weight_kg: number;
+  estimated_tokens: string;
+  estimated_sats: number;
+  notes: string;
 }

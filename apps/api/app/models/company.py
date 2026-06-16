@@ -27,6 +27,8 @@ class Company(Base):
     reward_kes_enabled: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     reward_sats_enabled: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 
+    reward_programme_config: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+
     # Optional sats settlement strategy (Lightning / Kotani-compatible batch flows, etc.)
     sats_reward_rail: Mapped[str | None] = mapped_column(String(32), nullable=True)
     sats_reward_config: Mapped[dict | None] = mapped_column(JSON, nullable=True)

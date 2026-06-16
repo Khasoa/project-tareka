@@ -50,9 +50,9 @@ export function LanguageSwitcher({
   const triggerClass =
     variant === "marketing"
       ? cn(
-          "rounded-lg border border-[rgba(232,237,234,0.12)] bg-[#1a1a1a] text-[#E6E8E3]",
-          "hover:border-[rgba(168,191,166,0.32)] hover:bg-[#202020]",
-          "focus-visible:border-[rgba(168,191,166,0.45)] focus-visible:ring-2 focus-visible:ring-[rgba(168,191,166,0.35)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#111111]",
+          "rounded-lg border border-white/[0.10] bg-[#171718] text-[#EEEEE9]",
+          "hover:border-white/[0.16] hover:bg-[#1C1C1B]",
+          "focus-visible:border-white/[0.22] focus-visible:ring-2 focus-visible:ring-white/[0.12] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F1011]",
         )
       : cn(
           "rounded-lg border border-[var(--border-subtle)] bg-[var(--elevated)] text-[var(--text-primary)] shadow-sm",
@@ -75,7 +75,7 @@ export function LanguageSwitcher({
           triggerClass,
           open &&
             variant === "marketing" &&
-            "border-[rgba(168,191,166,0.38)] shadow-[inset_0_0_0_1px_rgba(168,191,166,0.08)]",
+            "border-[rgba(161,201,152,0.38)] shadow-[inset_0_0_0_1px_rgba(161,201,152,0.08)]",
           open && variant === "app" && "border-accent-sage/35",
         )}
       >
@@ -90,7 +90,7 @@ export function LanguageSwitcher({
           aria-label={t("language.label")}
           className={cn(
             "absolute left-0 top-[calc(100%+6px)] z-[100]",
-            "min-w-full overflow-hidden rounded-lg border border-[rgba(232,237,234,0.11)] bg-[#121212]",
+            "min-w-full overflow-hidden rounded-lg border border-white/[0.10] bg-[#0F1011]",
             "py-1 shadow-[0_12px_40px_rgba(0,0,0,0.45)]",
           )}
         >
@@ -109,7 +109,7 @@ export function LanguageSwitcher({
                   className={cn(
                     "flex w-full items-center px-3 py-2 text-left text-xs font-medium outline-none transition-colors",
                     selected
-                      ? "cursor-default bg-[#1e2420] text-[#cfe5d9] shadow-[inset_0_0_0_1px_rgba(168,191,166,0.28)]"
+                      ? "cursor-default bg-[#1e2420] text-[#cfe5d9] shadow-[inset_0_0_0_1px_rgba(161,201,152,0.28)]"
                       : "cursor-pointer text-[#E8EAE4] hover:bg-[#1C1C1C] hover:text-[#FAFAF7] focus-visible:bg-[#1a1f1f] focus-visible:text-[#FAFAF7]",
                   )}
                 >

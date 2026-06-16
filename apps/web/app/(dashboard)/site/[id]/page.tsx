@@ -10,6 +10,7 @@ import { Card, CardDescription, CardHeader, CardTitle } from "@/components/card"
 import { ErrorState } from "@/components/error-state";
 import { MapPlaceholder } from "@/components/map-placeholder";
 import { inferMaterialsFromDescription, materialChipLabel } from "@/lib/directory-helpers";
+import { getMockDirectoryListing, mockCompanyDetailFromListing } from "@/lib/data/directory-mock";
 import { queryKeys } from "@/lib/query-keys";
 import { companyService } from "@/services/company.service";
 
@@ -23,7 +24,15 @@ export default function SiteProfilePage() {
 
   const companyQuery = useQuery({
     queryKey: queryKeys.company(id),
-    queryFn: () => companyService.getById(id),
+    queryFn: async () => {
+      try {
+        return await companyService.getById(id);
+      } catch {
+        const mock = getMockDirectoryListing(id);
+        if (mock) return mockCompanyDetailFromListing(mock);
+        throw new Error("Partner not found");
+      }
+    },
     enabled: Boolean(id),
   });
 

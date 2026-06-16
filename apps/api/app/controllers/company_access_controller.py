@@ -1,13 +1,10 @@
-from uuid import uuid4
-
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Request, status
 from sqlalchemy.orm import Session
 
 from app.core.rate_limit import limiter
 from app.db.session import get_db
-from app.models.company_access_request import CompanyAccessRequest
 from app.schemas.company_access_request import CompanyAccessRequestCreate
-from fastapi import Request
+from app.services.company_access_service import submit_company_access_request
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -20,15 +17,9 @@ def request_company_access(
     db: Session = Depends(get_db),
 ) -> dict[str, str]:
     _ = request
-    entry = CompanyAccessRequest(
-        id=str(uuid4()),
-        company_name=payload.company_name,
-        contact_person=payload.contact_person,
-        work_email=payload.work_email,
-        industry=payload.industry,
-        optional_message=payload.optional_message,
-        status="pending_approval",
-    )
-    db.add(entry)
-    db.commit()
-    return {"message": "Request received. We will review and contact you at the provided email."}
+    # MVP DEMO ONLY — replace with secure onboarding/password setup flow before production.
+    submit_company_access_request(db, payload)
+    return {
+        "message": "Company access created. Sign in at /company/login with your work email "
+        "and the temporary demo password issued for MVP (see product UI)."
+    }

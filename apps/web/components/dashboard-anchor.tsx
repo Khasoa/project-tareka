@@ -28,17 +28,17 @@ export function DashboardAnchor({ className }: { className?: string }) {
         />
         <path
           d="M24 44h96l44-20h104l52 18h120l96-26"
-          stroke="#A8BFA6"
+          stroke="#A1C998"
           strokeOpacity={0.35}
           strokeWidth={1}
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeDasharray="6 10"
         />
-        <circle cx="120" cy="44" r="3" fill="#A8BFA6" fillOpacity={0.55} />
+        <circle cx="120" cy="44" r="3" fill="#A1C998" fillOpacity={0.55} />
         <circle cx="264" cy="24" r="2.5" fill="currentColor" fillOpacity={0.18} />
         <circle cx="376" cy="42" r="2.5" fill="currentColor" fillOpacity={0.14} />
-        <circle cx="480" cy="22" r="3" fill="#A8BFA6" fillOpacity={0.4} />
+        <circle cx="480" cy="22" r="3" fill="#A1C998" fillOpacity={0.4} />
         <rect x="14" y="54" width="532" height="1" fill="currentColor" fillOpacity={0.06} />
       </svg>
     </div>

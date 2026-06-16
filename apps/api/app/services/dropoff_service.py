@@ -107,27 +107,43 @@ def _resolve_recycler(db: Session, data: DropoffConfirmRequest) -> User:
         user = db.scalars(select(User).where(User.id == data.recycler_id)).first()
         if not user:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid credentials")
+        if user.role != UserRole.recycler:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid credentials")
         return user
     if data.recycler_phone:
         user = db.scalars(select(User).where(User.phone == data.recycler_phone)).first()
         if not user:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid credentials")
+        if user.role != UserRole.recycler:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid credentials")
+        return user
+    if data.recycler_email:
+        email = data.recycler_email.strip().lower()
+        user = db.scalars(select(User).where(User.email == email)).first()
+        if not user:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid credentials")
+        if user.role != UserRole.recycler:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid credentials")
         return user
     raise HTTPException(
         status_code=status.HTTP_400_BAD_REQUEST,
-        detail="recycler_id or recycler_phone is required",
+        detail="recycler_id, recycler_phone, or recycler_email is required",
     )
 
 
-def _validate_operator_site_company(operator: User, site: Site) -> None:
-    if operator.role != UserRole.operator:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Insufficient permissions")
-    if site.operator_id:
-        if operator.id != site.operator_id:
+def _validate_operator_site_company(actor: User, site: Site) -> None:
+    if actor.role == UserRole.company_admin:
+        if not actor.company_id or actor.company_id != site.company_id:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Insufficient permissions")
         return
-    if operator.company_id and operator.company_id == site.company_id:
-        return
+    if actor.role == UserRole.operator:
+        if site.operator_id:
+            if actor.id != site.operator_id:
+                raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Insufficient permissions")
+            return
+        if actor.company_id and actor.company_id == site.company_id:
+            return
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Insufficient permissions")
     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Insufficient permissions")
 
 

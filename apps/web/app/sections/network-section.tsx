@@ -18,8 +18,6 @@ export function NetworkSection() {
   return (
     <section className="py-12 sm:py-14">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-
-        {/* Header */}
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-accent-sage">
@@ -41,7 +39,6 @@ export function NetworkSection() {
           </Link>
         </div>
 
-        {/* Interactive filter chips */}
         <div className="mt-6 flex flex-wrap gap-2" role="group" aria-label="Filter by material">
           {MATERIALS.map((mat) => (
             <button
@@ -60,12 +57,13 @@ export function NetworkSection() {
           ))}
         </div>
 
-        {/* Map + site list */}
         <div className="mt-8 grid gap-5 lg:grid-cols-[1fr_300px]">
-          <NetworkMap className="min-h-[320px]" activeMaterial={active} />
+          <NetworkMap
+            className="min-h-[320px] shadow-[0_24px_64px_-28px_rgba(0,0,0,0.72)] ring-1 ring-white/[0.06]"
+            activeMaterial={active}
+          />
           <NetworkPreview />
         </div>
-
       </div>
     </section>
   );

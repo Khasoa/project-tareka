@@ -68,8 +68,8 @@ function DirectoryCard({ listing }: { listing: DirectoryListing }) {
     <Link href={`/site/${listing.id}`} className="group block h-full">
       <article
         className={cn(
-          "flex h-full flex-col rounded-xl border bg-[#1C1C1C] p-4 transition-colors",
-          "border-border hover:border-accent-sage/35 hover:bg-[#202020]",
+          "flex h-full flex-col rounded-xl border bg-surface p-4 transition-colors",
+          "border-border hover:border-accent-sage/35 hover:bg-elevated",
         )}
       >
         <div className="flex items-start justify-between gap-2">
@@ -114,7 +114,7 @@ function DirectoryCard({ listing }: { listing: DirectoryListing }) {
           {t("directory.hoursNote")}
         </p>
 
-        <span className="mt-auto pt-4 block w-full rounded-lg border border-border/60 bg-[#232323] py-2 text-center text-xs font-medium text-secondary transition-colors group-hover:border-accent-sage/25 group-hover:text-foreground">
+        <span className="mt-auto block w-full rounded-lg border border-border/60 bg-elevated py-2 pt-4 text-center text-xs font-medium text-secondary transition-colors group-hover:border-accent-sage/25 group-hover:text-foreground">
           {t("directory.viewDetailsHours")}
         </span>
       </article>
@@ -126,7 +126,7 @@ function CardGridSkeleton() {
   return (
     <ul className="grid gap-3 sm:grid-cols-2">
       {[0, 1, 2, 3].map((i) => (
-        <li key={i} className="h-56 animate-pulse rounded-xl border border-border bg-[#1C1C1C]" />
+        <li key={i} className="h-56 animate-pulse rounded-xl border border-border bg-surface" />
       ))}
     </ul>
   );
@@ -217,7 +217,7 @@ export function DirectoryView() {
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder={t("directory.searchPlaceholder")}
-              className="h-11 w-full rounded-lg border border-border bg-[#1C1C1C] pl-10 pr-3 text-sm text-foreground placeholder:text-dim outline-none ring-accent-sage focus:ring-2"
+              className="h-11 w-full rounded-lg border border-border bg-surface pl-10 pr-3 text-sm text-foreground placeholder:text-dim outline-none ring-accent-sage focus:ring-2"
             />
           </div>
 
@@ -253,7 +253,7 @@ export function DirectoryView() {
               <select
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
-                className="h-10 w-full rounded-lg border border-border bg-[#1C1C1C] px-3 text-foreground outline-none ring-accent-sage focus:ring-2"
+                className="h-10 w-full rounded-lg border border-border bg-surface px-3 text-foreground outline-none ring-accent-sage focus:ring-2"
               >
                 <option value="">{t("directory.cityAll")}</option>
                 {cities.map((c) => (
@@ -265,10 +265,10 @@ export function DirectoryView() {
             </label>
           </div>
 
-          {apiQuery.isLoading ? (
+          {apiQuery.isLoading && !sourceListings.length ? (
             <CardGridSkeleton />
           ) : filtered.length === 0 ? (
-            <div className="rounded-xl border border-border bg-[#1C1C1C] px-5 py-10 text-center">
+            <div className="rounded-xl border border-border bg-surface px-5 py-10 text-center">
               <p className="font-heading text-sm font-semibold text-foreground">{t("directory.emptyTitle")}</p>
               <p className="mt-1.5 text-sm text-secondary">{t("directory.emptyBody")}</p>
               <button

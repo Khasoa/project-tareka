@@ -15,21 +15,27 @@ function linksForRole(role: UserRole | undefined): readonly NavItem[] {
     case "operator":
       return [
         { href: "/operator/quick-log", labelKey: "dashboard.nav.quickLog" },
+        { href: "/operator/history", labelKey: "dashboard.nav.opHistory" },
+        { href: "/operator/verifications", labelKey: "dashboard.nav.opVerifications" },
         { href: "/directory", labelKey: "dashboard.nav.directory" },
-        { href: "/settings", labelKey: "dashboard.nav.settings" },
+        { href: "/operator/settings", labelKey: "dashboard.nav.settings" },
       ] as const;
     case "company_admin":
       return [
         { href: "/company/dashboard", labelKey: "dashboard.nav.overview" },
+        { href: "/company/rewards", labelKey: "dashboard.nav.companyRewards" },
+        { href: "/operator/quick-log", labelKey: "dashboard.nav.quickLog" },
+        { href: "/operator/history", labelKey: "dashboard.nav.opHistory" },
+        { href: "/operator/verifications", labelKey: "dashboard.nav.opVerifications" },
         { href: "/directory", labelKey: "dashboard.nav.directory" },
-        { href: "/settings", labelKey: "dashboard.nav.settings" },
+        { href: "/company/settings", labelKey: "dashboard.nav.settings" },
       ] as const;
     case "platform_admin":
       return [
         { href: "/admin", labelKey: "dashboard.nav.networkOps" },
         { href: "/company/dashboard", labelKey: "dashboard.nav.orgWorkspace" },
         { href: "/directory", labelKey: "dashboard.nav.directory" },
-        { href: "/settings", labelKey: "dashboard.nav.settings" },
+        { href: "/admin/settings", labelKey: "dashboard.nav.settings" },
       ] as const;
     default:
       return [
@@ -51,7 +57,13 @@ function isActive(pathname: string, href: string, role: UserRole | undefined): b
   if (href === "/marketplace") {
     return pathname === "/marketplace" || pathname.startsWith("/marketplace/");
   }
-  if (href === "/company/dashboard" || href === "/operator/quick-log") {
+  if (href === "/company/dashboard" || href === "/company/rewards" || href === "/operator/quick-log") {
+    return pathname === href || pathname.startsWith(`${href}/`);
+  }
+  if (
+    href === "/operator/history" ||
+    href === "/operator/verifications"
+  ) {
     return pathname === href || pathname.startsWith(`${href}/`);
   }
   if (href === "/admin") {

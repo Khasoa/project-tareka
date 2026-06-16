@@ -20,7 +20,7 @@ export function RedemptionRail() {
 
   if (!user) {
     return (
-      <aside className="mb-12 rounded-2xl border border-dashed border-border bg-surface px-5 py-8 telemetry-panel sm:px-8">
+      <aside className="mb-12 rounded-2xl telemetry-panel px-5 py-8 sm:px-8">
         <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-accent-sage">{t("marketplace.redemptionGuestKicker")}</p>
         <p className="mt-2 max-w-xl text-sm leading-relaxed text-dim">
           {t("marketplace.redemptionGuestBody")}
@@ -36,7 +36,7 @@ export function RedemptionRail() {
   }
 
   return (
-    <aside className="mb-12 rounded-2xl border border-border bg-surface px-5 py-8 telemetry-panel sm:px-8">
+    <aside className="mb-12 rounded-2xl telemetry-panel px-5 py-8 sm:px-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-accent-sage">{t("marketplace.redemptionSignedKicker")}</p>

@@ -54,12 +54,14 @@ export default function OperatorLayout({ children }: { children: ReactNode }) {
       router.replace(`/auth/login?redirect=${encodeURIComponent("/operator/quick-log")}`);
       return;
     }
-    if (user.role !== "operator") {
+    if (user.role !== "operator" && user.role !== "company_admin") {
       router.replace(roleHome(user.role));
     }
   }, [ready, user, router]);
 
-  if (!ready || !user || user.role !== "operator") {
+  const allowed = user?.role === "operator" || user?.role === "company_admin";
+
+  if (!ready || !user || !allowed) {
     return (
       <AppShell>
         <GuardSkeleton />

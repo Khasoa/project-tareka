@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: "Secure operational access for verified partner organisations.",
 };
 
-/** Legacy URL — canonical company auth is `/auth/company/login` */
+/** Legacy URL — canonical company auth is `/company/login`. */
 export default function LegacyCompanyAccessPage() {
-  redirect("/auth/company/login");
+  redirect("/company/login");
 }

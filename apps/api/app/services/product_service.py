@@ -28,6 +28,7 @@ from app.schemas.product import (
     RewardEligibility,
     RewardRedemptionItemResponse,
 )
+from app.services.reward_programme_service import marketplace_redemption_allowed, minimum_balance_reserve_tokens
 from app.services.wallet_service import WalletService
 
 
@@ -489,6 +490,12 @@ def redeem_product(
             detail="This item is not open for appreciation-token redemption.",
         )
 
+    if not marketplace_redemption_allowed(company):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Catalogue redemption is paused for this partner programme.",
+        )
+
     wallet = product_repo.get_user_company_wallet_context(db, current_user.id, product.company_id)
     if wallet is None:
         raise HTTPException(
@@ -498,6 +505,13 @@ def redeem_product(
         )
 
     qty = Decimal(str(product.token_requirement))
+    reserve = Decimal(minimum_balance_reserve_tokens(company))
+    if wallet.token_balance < qty + reserve:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Insufficient appreciation balance for this redemption (partner reserve applies).",
+        )
+
     svc = WalletService(db)
     try:
         svc.redeem_tokens(wallet, qty)

@@ -18,7 +18,7 @@ export function SiteCard({ site, featured = false, className, ...props }: SiteCa
       className={cn(
         "group relative rounded-xl border bg-surface p-5 transition-all duration-200",
         featured
-          ? "border-accent-sage/30 shadow-[0_0_0_1px_rgba(168,191,166,0.12)] hover:border-accent-sage/50"
+          ? "border-accent-sage/30 shadow-[0_0_0_1px_rgba(161,201,152,0.12)] hover:border-accent-sage/50"
           : "border-border hover:border-border/80 hover:bg-elevated",
         className,
       )}
@@ -29,8 +29,7 @@ export function SiteCard({ site, featured = false, className, ...props }: SiteCa
           className="pointer-events-none absolute inset-0 rounded-xl opacity-40"
           aria-hidden
           style={{
-            background:
-              "radial-gradient(ellipse at top left, rgba(232,237,234,0.06) 0%, transparent 70%)",
+            background: "radial-gradient(ellipse at top left, rgba(161,201,152,0.06) 0%, transparent 70%)",
           }}
         />
       )}
@@ -45,7 +44,7 @@ export function SiteCard({ site, featured = false, className, ...props }: SiteCa
               {site.description}
             </p>
           ) : (
-            <p className="mt-1 text-sm text-dim">Collection partner on the tareka network.</p>
+            <p className="mt-1 text-sm text-dim">Collection partner on the tareka. network.</p>
           )}
         </div>
         {site.is_verified ? (
@@ -89,7 +88,7 @@ export function SiteCardSkeleton({ className }: { className?: string }) {
   );
 }
 
-/** Compact list-style site card used in the landing network preview. */
+/** Compact list-style site card — used in the landing network preview (light surface). */
 export function SiteCardCompact({
   site,
   className,
@@ -106,7 +105,8 @@ export function SiteCardCompact({
       )}
     >
       <div className="flex items-center justify-between gap-2">
-        <span className="font-heading text-sm font-semibold text-foreground group-hover:text-accent-sage transition-colors">
+        {/* On hover, accent-sage-ink gives correct colour on both light and dark */}
+        <span className="font-heading text-sm font-semibold text-foreground transition-colors group-hover:text-accent-sage-ink">
           {site.name}
         </span>
         {site.is_verified && (
@@ -118,7 +118,8 @@ export function SiteCardCompact({
       {site.description && (
         <p className="mt-1 line-clamp-1 text-xs text-dim">{site.description}</p>
       )}
-      <span className="mt-2 inline-flex items-center gap-1 text-xs text-accent-sage">
+      {/* accent-sage-ink — legible on both parchment light and graphite dark */}
+      <span className="mt-2 inline-flex items-center gap-1 text-xs text-accent-sage-ink">
         Get directions
         <ArrowRightIcon />
       </span>
@@ -129,15 +130,9 @@ export function SiteCardCompact({
 function ArrowRightIcon() {
   return (
     <svg
-      width="10"
-      height="10"
-      viewBox="0 0 10 10"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
+      width="10" height="10" viewBox="0 0 10 10"
+      fill="none" stroke="currentColor" strokeWidth="1.5"
+      strokeLinecap="round" strokeLinejoin="round" aria-hidden
     >
       <path d="M2 5h6M5.5 2.5L8 5l-2.5 2.5" />
     </svg>
