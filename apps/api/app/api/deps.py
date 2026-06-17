@@ -3,6 +3,7 @@ from collections.abc import Callable
 from fastapi import Cookie, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
+from app.core.deps import get_optional_current_user as get_optional_current_user  # re-export
 from app.core.security import decode_token
 from app.db.session import get_db
 from app.models.user import User

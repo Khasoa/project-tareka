@@ -17,11 +17,13 @@ _log = logging.getLogger(__name__)
 def queue_pending_sat_payout(db: Session, sat_payout: SatPayout) -> None:
     """Register a pending sat payout for later async processing (no external API calls)."""
     _log.info(
-        "sat_payout_pending_async id=%s company_id=%s dropoff_id=%s sats=%s",
+        "sat_payout_pending_async id=%s company_id=%s dropoff_id=%s sats=%s rail=%s issuance=%s",
         sat_payout.id,
         sat_payout.company_id,
         sat_payout.dropoff_id,
         sat_payout.sats_amount,
+        getattr(sat_payout, "payout_rail", None),
+        getattr(sat_payout, "issuance_metadata", None),
     )
 
 

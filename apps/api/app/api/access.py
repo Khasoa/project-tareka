@@ -128,3 +128,23 @@ def authorize_company_admin(
             detail="Insufficient permissions",
         )
     return current_user
+
+
+def authorize_company_access(
+    company_id: str,
+    current_user: User = Depends(get_current_active_user),
+) -> User:
+    """Company admins see only their org; platform admins may view any company."""
+    if current_user.role == UserRole.platform_admin:
+        return current_user
+    if current_user.role == UserRole.company_admin:
+        if not current_user.company_id or current_user.company_id != company_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Insufficient permissions",
+            )
+        return current_user
+    raise HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail="Insufficient permissions",
+    )

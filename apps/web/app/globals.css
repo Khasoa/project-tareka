@@ -1,45 +1,188 @@
+/* Satoshi — primary heading font (Fontshare CDN, browser-loaded) */
+@import url('https://api.fontshare.com/v2/css?f[]=satoshi@700,500,400&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --olive: #171b18;
-  --stone: #242926;
-  --linen: #f0ebdd;
-  --gold: #d9a13a;
-  --brick: #b96a48;
-  --cyan: #62a8b7;
-  --fog: #8a8f8a;
+/* ─────────────────────────────────────────────────────────────────────────────
+   Color system — light = dashboards / inner app; .dark = marketing + auth shell.
+   True matte charcoal / graphite in dark mode; warm parchment light mode.
 
-  --background: var(--olive);
-  --foreground: var(--linen);
-  --card: var(--stone);
+   ACCENT SYSTEM:
+   --accent-sage      → #A1C998  fills, tints, focus rings, glow (both themes)
+   --accent-sage-ink  → #3F6B3A  legible TEXT on light (parchment) — WCAG AA ~5.3:1
+                        #A1C998  legible TEXT on dark  (graphite)   — WCAG AA ~10:1
+   --map-glow-sage    → #A1C998  constellation map glow
+   ───────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  --map-glow-sage:     #A1C998;
+
+  /* Parchment — bumped slightly brighter from F1EFE8 */
+  --background:        #F5F3EC;
+  --canvas:            #F1EFE8;
+  --surface:           #FAFAF5;
+  --surface-focus:     #FFFFFF;
+  --surface-raised:    #F5F3EB;
+  --elevated:          #ECE9E0;
+  --elevated-strong:   #EAE7DE;
+
+  --border-subtle:     #D6D2C6;
+  --border-soft:       rgba(22, 22, 21, 0.10);
+
+  --text-primary:      #141413;
+  --text-secondary:    #484C45;
+  --text-dim:          #525750;
+
+  --accent-sage:       #A1C998;
+  --accent-sage-hover: #B0D4A8;
+  --accent-sage-ink:   #3F6B3A;
+
+  --accent-rose:       #c47070;
+
+  --background-dark-neutral: #0F1011;
+  --surface-dark-neutral:    #171718;
+
+  /* Nav chrome — always graphite regardless of page theme */
+  --nav-chrome:          #0F1011;
+  --nav-chrome-text:     #EEEEE9;
+  --nav-chrome-muted:    rgba(238, 238, 233, 0.62);
+  --nav-chrome-border:   rgba(232, 237, 234, 0.10);
 }
 
 .dark {
-  --background: var(--olive);
-  --foreground: var(--linen);
-  --card: var(--stone);
+  --background:        var(--background-dark-neutral);
+  --canvas:            #0F1011;
+  --surface:           #171718;
+  --surface-raised:    #1C1C1B;
+  --elevated:          #222221;
+  --elevated-strong:   #282827;
+
+  --border-subtle:     rgba(255, 255, 255, 0.10);
+  --border-soft:       rgba(255, 255, 255, 0.08);
+
+  --text-primary:      #EEEEE9;
+  --text-secondary:    #D4D4D0;
+  --text-dim:          #A8ADA5;
+
+  --accent-sage:       #A1C998;
+  --accent-sage-hover: #B0D4A8;
+  --accent-sage-ink:   #A1C998;
+
+  --accent-rose:       #e8a8a0;
+
+  --nav-chrome:          #0F1011;
+  --nav-chrome-text:     #EEEEE9;
+  --nav-chrome-muted:    rgba(212, 212, 208, 0.68);
+  --nav-chrome-border:   rgba(232, 237, 234, 0.10);
 }
 
-.hybrid {
-  --background: #f8f4ea;
-  --foreground: #1d231f;
-  --card: #ffffff;
-}
-
-.light {
-  --background: #ffffff;
-  --foreground: #1a1a1a;
-  --card: #f6f6f6;
+/* ─────────────────────────────────────────────────────────────────────────────
+   theme-light — parchment override for sections inside the .dark marketing shell.
+   Wrap a <section> or <div> in this class; token-based children render on
+   parchment automatically without per-component changes.
+   ───────────────────────────────────────────────────────────────────────────── */
+.theme-light {
+  --background:        #F5F3EC;
+  --canvas:            #F1EFE8;
+  --surface:           #FAFAF5;
+  --surface-raised:    #F5F3EB;
+  --elevated:          #ECE9E0;
+  --border-subtle:     #D6D2C6;
+  --text-primary:      #141413;
+  --text-secondary:    #484C45;
+  --text-dim:          #525750;
+  --accent-sage-ink:   #3F6B3A;
+  background:          var(--background);
+  color:               var(--text-primary);
 }
 
 body {
   background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-body), Inter, Arial, sans-serif;
+  color: var(--text-primary);
+  font-family: var(--font-body), Inter, system-ui, sans-serif;
 }
 
 .font-heading {
-  font-family: var(--font-heading), Sora, sans-serif;
+  font-family: 'Satoshi', var(--font-heading), Inter, system-ui, sans-serif;
+}
+
+/* ─── Nav chrome isolation ───────────────────────────────────────────────────
+   The sticky nav must ALWAYS render graphite regardless of what section
+   it floats over. We force the nav's own CSS variables so .theme-light
+   children beneath cannot bleed upward through the stacking context.
+   ─────────────────────────────────────────────────────────────────────────── */
+header.nav-chrome-fixed {
+  --background:   #0F1011;
+  --text-primary: #EEEEE9;
+  background: rgba(15, 16, 17, 0.97) !important;
+  color: var(--nav-chrome-text) !important;
+}
+
+/* Subtle film grain */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.018;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 200px;
+  mix-blend-mode: overlay;
+}
+
+.telemetry-panel {
+  background: var(--surface-raised, var(--elevated));
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+}
+.dark .telemetry-panel {
+  background: var(--surface-raised);
+  border: 1px solid rgba(232, 237, 234, 0.08);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Animations
+   ───────────────────────────────────────────────────────────────────────────── */
+@keyframes flow-pulse {
+  0%, 100% { opacity: 0.35; }
+  50%       { opacity: 0.65; }
+}
+.animate-flow-pulse { animation: flow-pulse 2.8s ease-in-out infinite; }
+
+@keyframes node-breathe {
+  0%, 100% { opacity: 0.06; }
+  50%       { opacity: 0.13; }
+}
+.animate-node-a { animation: node-breathe 4.2s ease-in-out infinite; }
+.animate-node-b { animation: node-breathe 5.8s ease-in-out infinite 1.9s; }
+.animate-node-c { animation: node-breathe 7.1s ease-in-out infinite 0.7s; }
+
+@keyframes nmap-outer-glow {
+  0%, 100% { opacity: 0.14; }
+  50%       { opacity: 0.32; }
+}
+@keyframes nmap-mid-glow {
+  0%, 100% { opacity: 0.25; }
+  50%       { opacity: 0.50; }
+}
+@keyframes nmap-core-pulse {
+  0%, 100% { opacity: 0.85; }
+  50%       { opacity: 1; }
+}
+.nmap-outer-pulse { animation: nmap-outer-glow 3.5s ease-in-out infinite; }
+.nmap-mid-pulse   { animation: nmap-mid-glow   3.5s ease-in-out infinite 0.4s; }
+.nmap-core-pulse  { animation: nmap-core-pulse 3.5s ease-in-out infinite 0.8s; }
+
+@keyframes nmap-route-flow {
+  0%   { stroke-dashoffset: 20; }
+  100% { stroke-dashoffset: 0; }
+}
+.nmap-route-flow {
+  stroke-dasharray: 5 9;
+  animation: nmap-route-flow 3s linear infinite;
 }

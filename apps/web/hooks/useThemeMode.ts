@@ -6,9 +6,8 @@ export function useThemeMode() {
   const { theme, setTheme } = useTheme();
 
   return {
-    theme: theme ?? "dark",
-    setDarkMode: () => setTheme("dark"),
-    setHybridMode: () => setTheme("hybrid"),
+    theme: theme ?? "light",
+    setDarkMode:  () => setTheme("dark"),
     setLightMode: () => setTheme("light"),
   };
 }

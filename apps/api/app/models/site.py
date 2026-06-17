@@ -21,6 +21,9 @@ class Site(Base):
     city: Mapped[str] = mapped_column(String(120), nullable=False)
     latitude: Mapped[Decimal] = mapped_column(Numeric(10, 7), nullable=False)
     longitude: Mapped[Decimal] = mapped_column(Numeric(10, 7), nullable=False)
+    location_id: Mapped[str | None] = mapped_column(
+        ForeignKey("locations.id"), index=True, nullable=True
+    )
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
@@ -30,6 +33,7 @@ class Site(Base):
     )
 
     company: Mapped["Company"] = relationship(foreign_keys=[company_id])
+    location: Mapped["Location | None"] = relationship("Location", back_populates="sites")
     operator: Mapped["User | None"] = relationship(
         "User", foreign_keys=[operator_id], back_populates="assigned_site"
     )

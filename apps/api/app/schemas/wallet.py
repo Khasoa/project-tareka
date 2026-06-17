@@ -14,6 +14,14 @@ class WalletResponse(BaseModel):
     lifetime_redeemed: Decimal
 
 
+class WalletCompanyProgramResponse(BaseModel):
+    """Scoped partner-program wallet for the signed-in user + company (marketplace eligibility)."""
+
+    linked: bool
+    wallet_id: str | None = None
+    token_balance: Decimal | None = None
+
+
 class TokenRedeemRequest(BaseModel):
     wallet_id: str = Field(min_length=1, max_length=36)
     amount: Decimal = Field(gt=0)

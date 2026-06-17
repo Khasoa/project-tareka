@@ -5,7 +5,7 @@ from datetime import date
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
-from app.api.access import authorize_company_admin
+from app.api.access import authorize_company_access
 from app.db.session import get_db
 from app.models.user import User
 from app.schemas.payout import MarkPaidRequest, PayoutLedgerResponse
@@ -19,7 +19,7 @@ def weekly_payouts(
     company_id: str,
     week_of: date = Query(..., description="Any date within the target ISO week (UTC)"),
     db: Session = Depends(get_db),
-    _: User = Depends(authorize_company_admin),
+    _: User = Depends(authorize_company_access),
 ):
     rows = get_weekly_report(db, company_id, week_of)
     return [
@@ -41,7 +41,7 @@ def mark_paid_endpoint(
     company_id: str,
     body: MarkPaidRequest,
     db: Session = Depends(get_db),
-    _: User = Depends(authorize_company_admin),
+    _: User = Depends(authorize_company_access),
 ):
     updated = mark_paid(db, company_id, body.recycler_ids, body.week_of)
     return {"updated": updated}

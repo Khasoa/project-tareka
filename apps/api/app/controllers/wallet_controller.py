@@ -7,10 +7,30 @@ from app.api.access import authorize_wallet, ensure_wallet_owner_or_company_admi
 from app.api.deps import get_current_active_user
 from app.db.session import get_db
 from app.models.user import User
-from app.schemas.wallet import TokenRedeemRequest, WalletResponse
+from app.repositories import product_repo
+from app.schemas.wallet import TokenRedeemRequest, WalletCompanyProgramResponse, WalletResponse
 from app.services.wallet_service import WalletService
 
 router = APIRouter(tags=["wallet"])
+
+
+@router.get(
+    "/wallet/me/for-company/{company_id}",
+    response_model=WalletCompanyProgramResponse,
+)
+def get_wallet_me_for_company_program(
+    company_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+) -> WalletCompanyProgramResponse:
+    wallet = product_repo.get_user_company_wallet_context(db, current_user.id, company_id)
+    if wallet is None:
+        return WalletCompanyProgramResponse(linked=False, wallet_id=None, token_balance=None)
+    return WalletCompanyProgramResponse(
+        linked=True,
+        wallet_id=wallet.id,
+        token_balance=wallet.token_balance,
+    )
 
 
 @router.get("/wallet/{wallet_id}", response_model=WalletResponse)

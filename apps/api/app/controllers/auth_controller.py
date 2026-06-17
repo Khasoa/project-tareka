@@ -114,6 +114,7 @@ def me(current_user: User = Depends(get_current_active_user)) -> UserResponse:
         language=current_user.language,
         is_active=current_user.is_active,
         is_verified=current_user.is_verified,
+        company_id=current_user.company_id,
     )
 
 

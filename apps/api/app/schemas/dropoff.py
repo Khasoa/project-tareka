@@ -12,12 +12,13 @@ class DropoffConfirmRequest(BaseModel):
     item_count: int = Field(ge=1, le=10_000)
     recycler_id: str | None = Field(default=None, max_length=36)
     recycler_phone: str | None = Field(default=None, max_length=30)
+    recycler_email: str | None = Field(default=None, max_length=255)
     client_reference_id: str | None = Field(default=None, max_length=128)
 
     @model_validator(mode="after")
     def require_recycler_identifier(self) -> "DropoffConfirmRequest":
-        if not self.recycler_id and not self.recycler_phone:
-            raise ValueError("recycler_id or recycler_phone is required")
+        if not self.recycler_id and not self.recycler_phone and not self.recycler_email:
+            raise ValueError("recycler_id, recycler_phone, or recycler_email is required")
         return self
 
 
@@ -46,11 +47,32 @@ class DropoffResponse(BaseModel):
     model_config = {"from_attributes": False}
 
 
-class PaginatedDropoffsResponse(BaseModel):
-    items: list[DropoffResponse]
+class CompanyDropoffAdminResponse(DropoffResponse):
+    site_name: str
+    recycler_name: str
+    reward_type: str
+
+
+class PaginatedCompanyDropoffsResponse(BaseModel):
+    items: list[CompanyDropoffAdminResponse]
     limit: int
     offset: int
     count: int
+
+
+def dropoff_to_company_admin_response(
+    dropoff,
+    *,
+    site_name: str,
+    recycler_name: str,
+) -> CompanyDropoffAdminResponse:
+    base = dropoff_to_response(dropoff)
+    return CompanyDropoffAdminResponse(
+        **base.model_dump(),
+        site_name=site_name,
+        recycler_name=recycler_name,
+        reward_type=str(dropoff.reward_type),
+    )
 
 
 def reward_summary_from_dict(data: dict) -> RewardSummary:
@@ -59,6 +81,13 @@ def reward_summary_from_dict(data: dict) -> RewardSummary:
         kes_obligation=Decimal(data.get("kes_obligation", 0)),
         sats_pending=int(data.get("sats_pending", 0)),
     )
+
+
+class PaginatedDropoffsResponse(BaseModel):
+    items: list[DropoffResponse]
+    limit: int
+    offset: int
+    count: int
 
 
 def dropoff_to_response(
