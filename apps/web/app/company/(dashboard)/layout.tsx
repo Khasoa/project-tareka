@@ -7,23 +7,8 @@ import { Suspense, useEffect, useState } from "react";
 import { Button } from "@/components/button";
 import { ErrorState } from "@/components/error-state";
 import { AppShell } from "@/components/layout/app-shell";
+import { companyLoginRedirectUrl, roleHomeRoute } from "@/lib/auth-routing";
 import { useAuthStore } from "@/store/auth";
-import type { UserRole } from "@/types";
-
-function roleHome(role: UserRole): string {
-  switch (role) {
-    case "recycler":
-      return "/recycler/dashboard";
-    case "operator":
-      return "/operator/quick-log";
-    case "company_admin":
-      return "/company/dashboard";
-    case "platform_admin":
-      return "/admin";
-    default:
-      return "/recycler/dashboard";
-  }
-}
 
 function GuardSkeleton() {
   return (
@@ -44,7 +29,7 @@ export default function CompanyDashboardLayout({ children }: { children: ReactNo
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    fetchCurrentUser()
+    void fetchCurrentUser()
       .catch(() => {})
       .finally(() => setReady(true));
   }, [fetchCurrentUser]);
@@ -52,7 +37,7 @@ export default function CompanyDashboardLayout({ children }: { children: ReactNo
   useEffect(() => {
     if (!ready) return;
     if (!user) {
-      router.replace(`/company/login?redirect=${encodeURIComponent("/company/dashboard")}`);
+      router.replace(companyLoginRedirectUrl("/company/dashboard"));
     }
   }, [ready, user, router]);
 
@@ -65,7 +50,7 @@ export default function CompanyDashboardLayout({ children }: { children: ReactNo
   }
 
   if (user.role !== "company_admin" && user.role !== "platform_admin") {
-    const home = roleHome(user.role);
+    const home = roleHomeRoute(user.role);
     return (
       <AppShell>
         <div className="mx-auto max-w-lg py-4">

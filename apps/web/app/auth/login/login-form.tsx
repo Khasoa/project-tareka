@@ -7,31 +7,14 @@ import { useEffect, useRef, useState } from "react";
 
 import { Logo } from "@/components/logo";
 import { cn } from "@/lib/utils";
-import { settingsPathForRole } from "@/lib/settings-routes";
+import { postLoginDestination } from "@/lib/auth-routing";
 import { useI18n } from "@/lib/i18n/i18n-provider";
 import { type LoginPayload } from "@/services/auth.service";
 import { useAuthStore } from "@/store/auth";
-import type { UserRole } from "@/types";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helpers
 // ─────────────────────────────────────────────────────────────────────────────
-
-function roleRoute(role: UserRole): string {
-  switch (role) {
-    case "recycler":       return "/recycler/dashboard";
-    case "operator":       return "/operator/quick-log";
-    case "company_admin":  return "/company/dashboard";
-    case "platform_admin": return "/admin";
-    default:               return "/recycler/dashboard";
-  }
-}
-
-function postLoginDestination(rawRedirect: string | null, role: UserRole): string {
-  if (rawRedirect === "/settings") return settingsPathForRole(role);
-  if (rawRedirect?.startsWith("/")) return rawRedirect;
-  return roleRoute(role);
-}
 
 function resolveError(err: unknown): string {
   if (err && typeof err === "object" && "isSessionError" in err)
@@ -251,12 +234,6 @@ export function LoginForm() {
                 </button>
               </div>
             </Field>
-
-            <div className="flex justify-end">
-              <Link href="/auth/forgot-password" className="text-xs text-accent-sage-ink transition-opacity hover:opacity-75">
-                Forgot password?
-              </Link>
-            </div>
 
             <button type="submit" disabled={submitting}
               className="mt-1 flex h-11 w-full items-center justify-center gap-2 rounded-xl text-sm font-medium transition-colors disabled:opacity-55"

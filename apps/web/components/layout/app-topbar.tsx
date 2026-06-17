@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 
 import { BrandMark } from "@/components/logo";
+import { signOutDestination } from "@/lib/auth-routing";
 import { useAuthStore } from "@/store/auth";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -23,8 +24,7 @@ export function AppTopbar() {
     } catch {
       /* ignore */
     }
-    const dest = user?.role === "company_admin" ? "/company/login" : "/auth/login";
-    router.replace(dest);
+    router.replace(signOutDestination(user?.role));
   }
 
   return (

@@ -29,7 +29,7 @@ export function MarketingFooter() {
             <p className={colHead}>{t("footer.colProduct")}</p>
             <ul className="space-y-3">
               <li><Link href="/directory"           className={link}>{t("footer.linkDirectory")}</Link></li>
-              <li><Link href="/recycler/dashboard"  className={link}>{t("footer.linkDashboard")}</Link></li>
+              <li><Link href="/dashboard" className={link}>{t("footer.linkDashboard")}</Link></li>
               <li><Link href="/for-companies"        className={link}>{t("footer.linkBusinessConsole")}</Link></li>
             </ul>
           </div>

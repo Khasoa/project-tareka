@@ -6,25 +6,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 import { Logo } from "@/components/logo";
+import { roleHomeRoute } from "@/lib/auth-routing";
 import { useI18n } from "@/lib/i18n/i18n-provider";
 import { cn } from "@/lib/utils";
 import { authService, type LoginPayload, type RegisterPayload } from "@/services/auth.service";
 import { useAuthStore } from "@/store/auth";
-import type { UserRole } from "@/types";
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Helpers
-// ─────────────────────────────────────────────────────────────────────────────
-
-function roleRoute(role: UserRole): string {
-  switch (role) {
-    case "recycler":       return "/recycler/dashboard";
-    case "operator":       return "/operator/quick-log";
-    case "company_admin":  return "/company/dashboard";
-    case "platform_admin": return "/admin";
-    default:               return "/recycler/dashboard";
-  }
-}
 
 function resolveRegisterError(err: unknown): string {
   if (axios.isAxiosError(err)) {
@@ -167,7 +153,7 @@ export function RegisterForm() {
       try {
         await login(loginPayload);
         const user = useAuthStore.getState().user;
-        const dest = searchParams.get("redirect") ?? roleRoute(user!.role);
+        const dest = searchParams.get("redirect") ?? roleHomeRoute(user!.role);
         router.push(dest);
       } catch {
         router.push("/auth/login?registered=1");

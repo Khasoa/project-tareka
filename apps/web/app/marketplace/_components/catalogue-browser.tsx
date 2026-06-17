@@ -15,6 +15,7 @@ import {
   getMockPartnerCatalogue,
   MARKETPLACE_MOCK_PARTNERS,
 } from "@/lib/data/marketplace-mock";
+import { withApiFallback } from "@/lib/data/api-fallback";
 import { walletService, type WalletCompanyProgram } from "@/services/wallet.service";
 import { useAuthStore } from "@/store/auth";
 import type { CompanyProductSummary, RewardListItem } from "@/types";
@@ -297,15 +298,26 @@ export function CatalogueBrowser(props: CatalogueBrowserProps) {
 
   const partnersStrip = useQuery({
     queryKey: queryKeys.marketplacePartnerStrip,
-    queryFn: async () => {
-      try {
-        const data = await listParticipatingProductCompanies({ limit: 64, offset: 0 });
-        if (data.items.length > 0) return data;
-      } catch {
-        /* demo fallback */
-      }
-      return { items: MARKETPLACE_MOCK_PARTNERS, limit: 64, offset: 0, count: MARKETPLACE_MOCK_PARTNERS.length };
-    },
+    queryFn: () =>
+      withApiFallback(
+        "marketplace partners",
+        async () => {
+          const data = await listParticipatingProductCompanies({ limit: 64, offset: 0 });
+          if (data.items.length > 0) return data;
+          return {
+            items: MARKETPLACE_MOCK_PARTNERS,
+            limit: 64,
+            offset: 0,
+            count: MARKETPLACE_MOCK_PARTNERS.length,
+          };
+        },
+        () => ({
+          items: MARKETPLACE_MOCK_PARTNERS,
+          limit: 64,
+          offset: 0,
+          count: MARKETPLACE_MOCK_PARTNERS.length,
+        }),
+      ),
     staleTime: 60_000,
     enabled: !slug,
     placeholderData: { items: MARKETPLACE_MOCK_PARTNERS, limit: 64, offset: 0, count: MARKETPLACE_MOCK_PARTNERS.length },
@@ -314,17 +326,22 @@ export function CatalogueBrowser(props: CatalogueBrowserProps) {
   const partnerCatalogue = useQuery({
     queryKey: queryKeys.partnerCatalogueSlug(slug ?? "~", PAGE_SIZE * 10, 0),
     enabled: Boolean(slug),
-    queryFn: async () => {
-      try {
-        const data = await getPartnerCatalogueBySlug(slug!, { limit: PAGE_SIZE * 10, offset: 0 });
-        if (data.products.items.length > 0) return data;
-      } catch {
-        /* demo fallback */
-      }
-      const mock = getMockPartnerCatalogue(slug!);
-      if (mock) return mock;
-      throw new Error("Partner not found");
-    },
+    queryFn: () =>
+      withApiFallback(
+        "partner catalogue",
+        async () => {
+          const data = await getPartnerCatalogueBySlug(slug!, { limit: PAGE_SIZE * 10, offset: 0 });
+          if (data.products.items.length > 0) return data;
+          const mock = getMockPartnerCatalogue(slug!);
+          if (mock) return mock;
+          throw new Error("Partner not found");
+        },
+        () => {
+          const mock = getMockPartnerCatalogue(slug!);
+          if (!mock) throw new Error("Partner not found");
+          return mock;
+        },
+      ),
     placeholderData: slug ? getMockPartnerCatalogue(slug) ?? undefined : undefined,
   });
 

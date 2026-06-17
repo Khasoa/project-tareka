@@ -7,6 +7,7 @@ import { useMemo, useState } from "react";
 import { Badge } from "@/components/badge";
 import { MapPlaceholder } from "@/components/map-placeholder";
 import { DIRECTORY_MOCK_LISTINGS, type DirectoryListing } from "@/lib/data/directory-mock";
+import { withApiFallback } from "@/lib/data/api-fallback";
 import { inferMaterialsFromDescription } from "@/lib/directory-helpers";
 import { queryKeys } from "@/lib/query-keys";
 import { companyService } from "@/services/company.service";
@@ -145,23 +146,24 @@ export function DirectoryView() {
 
   const apiQuery = useQuery({
     queryKey: queryKeys.companies({ country: "Kenya", city: city || undefined }),
-    queryFn: () => companyService.list({ country: "Kenya", city: city || undefined }),
+    queryFn: () =>
+      withApiFallback(
+        "directory listings",
+        () => companyService.list({ country: "Kenya", city: city || undefined }),
+        () => DIRECTORY_MOCK_LISTINGS,
+        (items) => items.length === 0,
+      ),
     staleTime: 60_000,
+    placeholderData: DIRECTORY_MOCK_LISTINGS,
   });
 
   const sourceListings = useMemo((): DirectoryListing[] => {
-    if (apiQuery.isError) {
-      return DIRECTORY_MOCK_LISTINGS;
-    }
+    const label = city || "Kenya";
     if (apiQuery.data && apiQuery.data.length > 0) {
-      const label = city || "Kenya";
       return apiQuery.data.map((c) => listingFromApi(c, label));
     }
-    if (apiQuery.isSuccess) {
-      return DIRECTORY_MOCK_LISTINGS;
-    }
     return DIRECTORY_MOCK_LISTINGS;
-  }, [apiQuery.data, apiQuery.isError, apiQuery.isSuccess, city]);
+  }, [apiQuery.data, city]);
 
   const usingMockFallback =
     apiQuery.isError || (apiQuery.isSuccess && (apiQuery.data?.length ?? 0) === 0);

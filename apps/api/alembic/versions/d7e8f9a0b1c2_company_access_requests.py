@@ -17,6 +17,12 @@ depends_on = None
 
 
 def upgrade() -> None:
+    bind = op.get_bind()
+    insp = sa.inspect(bind)
+
+    if insp.has_table("company_access_requests"):
+        return
+
     op.create_table(
         "company_access_requests",
         sa.Column("id", sa.String(36), primary_key=True, index=True, nullable=False),

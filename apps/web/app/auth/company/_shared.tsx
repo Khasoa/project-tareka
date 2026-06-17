@@ -1,17 +1,6 @@
 import axios from "axios";
 
 import { type LoginPayload } from "@/services/auth.service";
-import type { UserRole } from "@/types";
-
-export function roleRoute(role: UserRole): string {
-  switch (role) {
-    case "company_admin":  return "/company/dashboard";
-    case "recycler":       return "/recycler/dashboard";
-    case "operator":       return "/operator/quick-log";
-    case "platform_admin": return "/admin";
-    default:               return "/company/dashboard";
-  }
-}
 
 export function normalizePhoneInput(raw: string): string {
   const trimmed = raw.trim().replace(/[^\d+]/g, "");

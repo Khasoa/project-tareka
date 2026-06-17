@@ -43,7 +43,7 @@ export function RedemptionRail() {
           <p className="mt-1 text-sm text-dim">{t("marketplace.redemptionSignedSub")}</p>
         </div>
         <Link
-          href="/recycler/history"
+          href="/history"
           className="text-xs font-medium uppercase tracking-[0.12em] text-map-glow hover:text-map-glow/80"
         >
           {t("marketplace.dropOffHistory")}

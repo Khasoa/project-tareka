@@ -2,7 +2,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import List
 
-from pydantic import Field
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -25,6 +25,14 @@ class Settings(BaseSettings):
 
     DATABASE_URL: str
     REDIS_URL: str = "redis://localhost:6379"
+    PORT: int = 8000
+
+    @field_validator("DATABASE_URL", mode="before")
+    @classmethod
+    def normalize_database_url(cls, value: object) -> object:
+        if isinstance(value, str) and value.startswith("postgres://"):
+            return value.replace("postgres://", "postgresql://", 1)
+        return value
 
     SECRET_KEY: str = Field(default="change-me-in-production")
     ALGORITHM: str = "HS256"

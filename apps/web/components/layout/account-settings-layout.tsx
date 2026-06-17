@@ -10,19 +10,15 @@ import { useAuthStore } from "@/store/auth";
 
 function GuardSkeleton() {
   return (
-    <div className="mx-auto max-w-3xl space-y-4 px-1 py-3">
-      <div className="h-14 w-full animate-pulse rounded-lg bg-surface/80" />
-      <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-4">
-        {[0, 1, 2, 3].map((i) => (
-          <div key={i} className="h-20 animate-pulse rounded-xl border border-border bg-surface" />
-        ))}
-      </div>
-      <div className="h-48 animate-pulse rounded-xl border border-border bg-surface" />
+    <div className="mx-auto max-w-md py-16 text-center">
+      <div className="mx-auto h-4 w-48 animate-pulse rounded bg-elevated" />
     </div>
   );
 }
 
-export default function OperatorLayout({ children }: { children: ReactNode }) {
+const ACCOUNT_SETTINGS_ROLES = new Set(["recycler", "operator"]);
+
+export function AccountSettingsLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { user, fetchCurrentUser } = useAuthStore();
   const [ready, setReady] = useState(false);
@@ -36,17 +32,15 @@ export default function OperatorLayout({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!ready) return;
     if (!user) {
-      router.replace(loginRedirectUrl("/operator/quick-log"));
+      router.replace(loginRedirectUrl("/settings"));
       return;
     }
-    if (user.role !== "operator" && user.role !== "company_admin") {
+    if (!ACCOUNT_SETTINGS_ROLES.has(user.role)) {
       router.replace(roleHomeRoute(user.role));
     }
   }, [ready, user, router]);
 
-  const allowed = user?.role === "operator" || user?.role === "company_admin";
-
-  if (!ready || !user || !allowed) {
+  if (!ready || !user || !ACCOUNT_SETTINGS_ROLES.has(user.role)) {
     return (
       <AppShell>
         <GuardSkeleton />

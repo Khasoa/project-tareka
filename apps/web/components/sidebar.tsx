@@ -18,7 +18,7 @@ function linksForRole(role: UserRole | undefined): readonly NavItem[] {
         { href: "/operator/history", labelKey: "dashboard.nav.opHistory" },
         { href: "/operator/verifications", labelKey: "dashboard.nav.opVerifications" },
         { href: "/directory", labelKey: "dashboard.nav.directory" },
-        { href: "/operator/settings", labelKey: "dashboard.nav.settings" },
+        { href: "/settings", labelKey: "dashboard.nav.settings" },
       ] as const;
     case "company_admin":
       return [
@@ -39,20 +39,20 @@ function linksForRole(role: UserRole | undefined): readonly NavItem[] {
       ] as const;
     default:
       return [
-        { href: "/recycler/dashboard", labelKey: "dashboard.nav.home" },
-        { href: "/recycler/dashboard", labelKey: "dashboard.nav.dashboard" },
+        { href: "/dashboard", labelKey: "dashboard.nav.home" },
+        { href: "/dashboard", labelKey: "dashboard.nav.dashboard" },
         { href: "/directory", labelKey: "dashboard.nav.directory" },
         { href: "/marketplace", labelKey: "nav.marketplace" },
-        { href: "/recycler/wallet", labelKey: "dashboard.nav.wallet" },
-        { href: "/recycler/history", labelKey: "dashboard.nav.history" },
-        { href: "/recycler/settings", labelKey: "dashboard.nav.settings" },
+        { href: "/wallet", labelKey: "dashboard.nav.wallet" },
+        { href: "/history", labelKey: "dashboard.nav.history" },
+        { href: "/settings", labelKey: "dashboard.nav.settings" },
       ] as const;
   }
 }
 
-function isActive(pathname: string, href: string, role: UserRole | undefined): boolean {
-  if (href === "/recycler/dashboard") {
-    return pathname === "/recycler/dashboard";
+function isActive(pathname: string, href: string): boolean {
+  if (href === "/dashboard") {
+    return pathname === "/dashboard";
   }
   if (href === "/marketplace") {
     return pathname === "/marketplace" || pathname.startsWith("/marketplace/");
@@ -60,10 +60,7 @@ function isActive(pathname: string, href: string, role: UserRole | undefined): b
   if (href === "/company/dashboard" || href === "/company/rewards" || href === "/operator/quick-log") {
     return pathname === href || pathname.startsWith(`${href}/`);
   }
-  if (
-    href === "/operator/history" ||
-    href === "/operator/verifications"
-  ) {
+  if (href === "/operator/history" || href === "/operator/verifications") {
     return pathname === href || pathname.startsWith(`${href}/`);
   }
   if (href === "/admin") {
@@ -87,7 +84,7 @@ export function Sidebar({ className }: { className?: string }) {
     >
       <nav className="flex flex-1 flex-col gap-0.5 px-2 py-3" aria-label="App navigation">
         {links.map((link, idx) => {
-          const active = isActive(pathname, link.href, user?.role);
+          const active = isActive(pathname, link.href);
           const label = t(link.labelKey);
           const key = `${link.href}-${label}-${idx}`;
 

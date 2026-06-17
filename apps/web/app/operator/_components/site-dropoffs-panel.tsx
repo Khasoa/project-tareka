@@ -7,58 +7,6 @@ import { dropoffService } from "@/services/dropoff.service";
 import { operatorService } from "@/services/operator.service";
 import { queryKeys } from "@/lib/query-keys";
 import { cn } from "@/lib/utils";
-import type { DropoffItem } from "@/types";
-
-const DEMO_DROPOFFS: DropoffItem[] = [
-  {
-    id: "demo-drop-1",
-    site_id: "demo-site-eastlands",
-    company_id: "mock-company-eastlands",
-    recycler_id: "demo-recycler-1",
-    operator_id: "demo-operator-1",
-    material_type: "plastic",
-    item_count: 12,
-    estimated_weight_kg: 4.2,
-    estimated_weight_label: "operator-estimated",
-    co2_avoided_kg: 2.1,
-    co2_estimate_label: "methodological estimate",
-    confirmed_at: new Date(Date.now() - 1000 * 60 * 90).toISOString(),
-    reward_issued: true,
-    reward_summary: { tokens: "40", kes_obligation: "0", sats_pending: 0 },
-  },
-  {
-    id: "demo-drop-2",
-    site_id: "demo-site-kilimani",
-    company_id: "mock-company-kilimani",
-    recycler_id: "demo-recycler-2",
-    operator_id: "demo-operator-1",
-    material_type: "glass",
-    item_count: 8,
-    estimated_weight_kg: 6.8,
-    estimated_weight_label: "operator-estimated",
-    co2_avoided_kg: 3.4,
-    co2_estimate_label: "methodological estimate",
-    confirmed_at: new Date(Date.now() - 1000 * 60 * 240).toISOString(),
-    reward_issued: true,
-    reward_summary: { tokens: "55", kes_obligation: "0", sats_pending: 0 },
-  },
-  {
-    id: "demo-drop-3",
-    site_id: "demo-site-westlands",
-    company_id: "mock-company-westlands",
-    recycler_id: "demo-recycler-3",
-    operator_id: "demo-operator-1",
-    material_type: "paper",
-    item_count: 20,
-    estimated_weight_kg: 3.1,
-    estimated_weight_label: "operator-estimated",
-    co2_avoided_kg: 1.5,
-    co2_estimate_label: "methodological estimate",
-    confirmed_at: new Date(Date.now() - 1000 * 60 * 520).toISOString(),
-    reward_issued: false,
-    reward_summary: null,
-  },
-];
 
 function formatMaterial(type: string): string {
   return type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
@@ -90,33 +38,21 @@ export function SiteDropoffsPanel({
     staleTime: 60_000,
   });
 
-  const activeSiteId = siteId || sitesQuery.data?.[0]?.id || "demo-site-eastlands";
+  const sites = sitesQuery.data ?? [];
+  const activeSiteId = siteId || sites[0]?.id || "";
 
   const dropoffsQuery = useQuery({
     queryKey: queryKeys.siteDropoffs(activeSiteId, 40, 0),
-    queryFn: async () => {
-      try {
-        return await dropoffService.listBySite(activeSiteId, { limit: 40, offset: 0 });
-      } catch {
-        return { items: DEMO_DROPOFFS, limit: 40, offset: 0, count: DEMO_DROPOFFS.length };
-      }
-    },
+    queryFn: () => dropoffService.listBySite(activeSiteId, { limit: 40, offset: 0 }),
     enabled: Boolean(activeSiteId),
-    placeholderData: { items: DEMO_DROPOFFS, limit: 40, offset: 0, count: DEMO_DROPOFFS.length },
+    staleTime: 30_000,
   });
 
   const cutoff = Date.now() - recentHours * 60 * 60 * 1000;
   const rows = useMemo(() => {
-    const items = dropoffsQuery.data?.items ?? DEMO_DROPOFFS;
+    const items = dropoffsQuery.data?.items ?? [];
     return items.filter((d) => new Date(d.confirmed_at).getTime() >= cutoff);
   }, [cutoff, dropoffsQuery.data?.items]);
-
-  const sites = sitesQuery.data?.length
-    ? sitesQuery.data
-    : [
-        { id: "demo-site-eastlands", name: "Eastlands Collection Hub", city: "Nairobi", address: "Eastlands", company_id: "mock-company-eastlands" },
-        { id: "demo-site-kilimani", name: "Kilimani Neighbourhood Point", city: "Nairobi", address: "Kilimani", company_id: "mock-company-kilimani" },
-      ];
 
   return (
     <section
@@ -147,7 +83,25 @@ export function SiteDropoffsPanel({
         </label>
       </header>
 
-      {dropoffsQuery.isLoading && !rows.length ? (
+      {sitesQuery.isError ? (
+        <p className="rounded-lg border border-dashed border-border px-4 py-8 text-center text-sm text-dim">
+          Unable to load assigned sites. Verify the API is reachable and your operator account is linked to a site.
+        </p>
+      ) : sitesQuery.isLoading ? (
+        <ul className="space-y-2">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <li key={i} className="h-14 animate-pulse rounded-lg border border-border bg-elevated/60" />
+          ))}
+        </ul>
+      ) : sites.length === 0 ? (
+        <p className="rounded-lg border border-dashed border-border px-4 py-8 text-center text-sm text-dim">
+          No sites are assigned to your operator account yet.
+        </p>
+      ) : dropoffsQuery.isError ? (
+        <p className="rounded-lg border border-dashed border-border px-4 py-8 text-center text-sm text-dim">
+          Unable to load drop-offs for this site. Try again shortly.
+        </p>
+      ) : dropoffsQuery.isLoading && !rows.length ? (
         <ul className="space-y-2">
           {Array.from({ length: 4 }).map((_, i) => (
             <li key={i} className="h-14 animate-pulse rounded-lg border border-border bg-elevated/60" />

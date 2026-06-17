@@ -1,6 +1,7 @@
 from app.db.session import Base
 from app.models.audit_log import AuditLog
 from app.models.company import Company
+from app.models.company_access_request import CompanyAccessRequest
 from app.models.location import Location
 from app.models.user import User
 from app.models.site import Site
@@ -16,6 +17,7 @@ __all__ = [
     "AuditLog",
     "Base",
     "Company",
+    "CompanyAccessRequest",
     "Dropoff",
     "Location",
     "PayoutLedger",

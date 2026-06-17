@@ -6,6 +6,7 @@ import { useEffect } from "react";
 
 import { Button } from "@/components/button";
 import { queryKeys } from "@/lib/query-keys";
+import { withApiFallback } from "@/lib/data/api-fallback";
 import { NETWORK_MOCK_EXPERIENCE } from "@/lib/data/network-mock";
 import { impactService } from "@/services/impact.service";
 import { useAuthStore } from "@/store/auth";
@@ -31,7 +32,7 @@ function formatWhen(iso: string): string {
 function roleWorkspace(role: UserRole): { href: string; label: string } {
   switch (role) {
     case "recycler":
-      return { href: "/recycler/dashboard", label: "Your recycler dashboard" };
+      return { href: "/dashboard", label: "Your recycler dashboard" };
     case "operator":
       return { href: "/operator/quick-log", label: "Operator console" };
     case "company_admin":
@@ -81,7 +82,7 @@ function ConstellationField({ dense }: { dense?: boolean }) {
   );
 }
 
-function StatCard({
+function ImpactStatCard({
   label,
   value,
   hint,
@@ -121,14 +122,13 @@ export function NetworkImpactView() {
 
   const netQuery = useQuery({
     queryKey: queryKeys.networkImpact,
-    queryFn: async () => {
-      try {
-        return await impactService.getNetworkExperience();
-      } catch {
-        return NETWORK_MOCK_EXPERIENCE;
-      }
-    },
-    staleTime: 45_000,
+    queryFn: () =>
+      withApiFallback(
+        "network impact",
+        () => impactService.getNetworkExperience(),
+        () => NETWORK_MOCK_EXPERIENCE,
+      ),
+    staleTime: 60_000,
     placeholderData: NETWORK_MOCK_EXPERIENCE,
   });
 
@@ -185,32 +185,32 @@ export function NetworkImpactView() {
         ) : (
           <>
             <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-              <StatCard
+              <ImpactStatCard
                 label="Verified contributions"
                 value={n.verified_dropoffs.toLocaleString()}
                 hint="Network-wide operator-confirmed intake"
               />
-              <StatCard
+              <ImpactStatCard
                 label="Active recyclers"
                 value={n.active_recyclers.toLocaleString()}
                 hint="Accounts participating in the network"
               />
-              <StatCard
+              <ImpactStatCard
                 label="Participating businesses"
                 value={n.active_companies.toLocaleString()}
                 hint="Active collection partners"
               />
-              <StatCard
+              <ImpactStatCard
                 label="Est. material recovery"
                 value={`${formatKg(n.total_estimated_weight_kg)} kg`}
                 hint={`${n.estimated_weight_label} · network total`}
               />
-              <StatCard
+              <ImpactStatCard
                 label="Est. CO₂ avoided"
                 value={`${formatKg(n.total_estimated_co2_avoided_kg)} kg`}
                 hint={`${n.co2_estimate_label} · not certification`}
               />
-              <StatCard
+              <ImpactStatCard
                 label="Operational hubs"
                 value={n.operational_hubs.toLocaleString()}
                 hint="Active sites on the directory"

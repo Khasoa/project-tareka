@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 import { Logo } from "@/components/logo";
+import { companyPortalHomeRoute } from "@/lib/auth-routing";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n/i18n-provider";
 import { useAuthStore } from "@/store/auth";
@@ -15,7 +16,6 @@ import {
   companyInputStyle,
   normalizePhoneInput,
   resolveLoginError,
-  roleRoute,
 } from "./_shared";
 import { EyeIcon, Spinner } from "./eye-icon";
 import { Field } from "./field";
@@ -73,7 +73,7 @@ export function CompanySignInForm() {
         setSigninError(t("companyAuth.errors.portalOnly"));
         return;
       }
-      const fallback = roleRoute(user.role);
+      const fallback = companyPortalHomeRoute(user.role);
       const next = searchParams.get("redirect");
       router.push(next && next.startsWith("/") ? next : fallback);
     } catch (err) {

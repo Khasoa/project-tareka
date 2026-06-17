@@ -10,19 +10,19 @@ import { useAuthStore } from "@/store/auth";
 
 function GuardSkeleton() {
   return (
-    <div className="mx-auto max-w-3xl space-y-4 px-1 py-3">
-      <div className="h-14 w-full animate-pulse rounded-lg bg-surface/80" />
-      <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-4">
+    <div className="mx-auto max-w-5xl space-y-5 px-4 py-4">
+      <div className="h-6 w-44 animate-pulse rounded-lg bg-elevated" />
+      <div className="h-4 w-72 animate-pulse rounded bg-elevated" />
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {[0, 1, 2, 3].map((i) => (
           <div key={i} className="h-20 animate-pulse rounded-xl border border-border bg-surface" />
         ))}
       </div>
-      <div className="h-48 animate-pulse rounded-xl border border-border bg-surface" />
     </div>
   );
 }
 
-export default function OperatorLayout({ children }: { children: ReactNode }) {
+export function RecyclerGuardLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { user, fetchCurrentUser } = useAuthStore();
   const [ready, setReady] = useState(false);
@@ -36,17 +36,15 @@ export default function OperatorLayout({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!ready) return;
     if (!user) {
-      router.replace(loginRedirectUrl("/operator/quick-log"));
+      router.replace(loginRedirectUrl("/dashboard"));
       return;
     }
-    if (user.role !== "operator" && user.role !== "company_admin") {
+    if (user.role !== "recycler") {
       router.replace(roleHomeRoute(user.role));
     }
   }, [ready, user, router]);
 
-  const allowed = user?.role === "operator" || user?.role === "company_admin";
-
-  if (!ready || !user || !allowed) {
+  if (!ready || !user || user.role !== "recycler") {
     return (
       <AppShell>
         <GuardSkeleton />

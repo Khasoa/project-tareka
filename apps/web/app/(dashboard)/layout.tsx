@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { AppShell } from "@/components/layout/app-shell";
+import { RecyclerGuardLayout } from "@/components/layout/recycler-guard-layout";
 
 export default function DashboardGroupLayout({ children }: { children: ReactNode }) {
-  return <AppShell>{children}</AppShell>;
+  return <RecyclerGuardLayout>{children}</RecyclerGuardLayout>;
 }

@@ -12,6 +12,7 @@ import { queryKeys } from "@/lib/query-keys";
 import { cn } from "@/lib/utils";
 import { getMyRedemptions, getProductReward, redeemProduct } from "@/services/marketplace.service";
 import { getMockProductReward } from "@/lib/data/marketplace-mock";
+import { withApiFallback } from "@/lib/data/api-fallback";
 import { useAuthStore } from "@/store/auth";
 import type { ProductRewardDetail } from "@/types";
 
@@ -26,15 +27,16 @@ export function RewardDetailView() {
 
   const rewardQuery = useQuery({
     queryKey: queryKeys.productReward(id),
-    queryFn: async () => {
-      try {
-        return await getProductReward(id);
-      } catch {
-        const mock = getMockProductReward(id);
-        if (mock) return mock;
-        throw new Error("Reward not found");
-      }
-    },
+    queryFn: () =>
+      withApiFallback(
+        "product reward detail",
+        () => getProductReward(id),
+        () => {
+          const mock = getMockProductReward(id);
+          if (!mock) throw new Error("Reward not found");
+          return mock;
+        },
+      ),
     enabled: Boolean(id),
     placeholderData: id.startsWith("mock-r-") ? getMockProductReward(id) ?? undefined : undefined,
   });
