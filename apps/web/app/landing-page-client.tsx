@@ -211,23 +211,23 @@ function FinalCTA() {
         style={{ background: "radial-gradient(ellipse 50% 70% at 26% 50%, rgba(161,201,152,0.13), transparent 60%)" }}
       />
       <div className="relative z-10 mx-auto grid max-w-[1120px] grid-cols-1 items-stretch md:grid-cols-2">
-        <div className="self-center px-6 py-16 md:py-20 md:pr-12">
+        <div className="self-center px-6 py-14 sm:py-16 md:py-20 md:pr-12">
           <p className="inline-flex items-center gap-2 font-mono text-xs font-medium uppercase tracking-[0.14em] text-accent-sage-ink">
             <span className="h-[7px] w-[7px] rounded-full bg-accent-sage shadow-[0_0_10px_var(--accent-sage)]" aria-hidden />
             {t("landing.finalCta.kicker")}
           </p>
-          <h2 className="mt-3 font-heading text-[2.75rem] font-bold leading-tight tracking-[-0.022em] text-foreground">
+          <h2 className="mt-3 font-heading text-[clamp(2rem,4.5vw,2.75rem)] font-bold leading-tight tracking-[-0.022em] text-foreground">
             {t("landing.finalCta.headline")}
           </h2>
-          <p className="mt-3 max-w-[36ch] text-base leading-relaxed text-muted">
+          <p className="mt-3 max-w-[36ch] text-[15px] leading-relaxed text-muted sm:text-base">
             {t("landing.finalCta.body")}
           </p>
-          <div className="mt-7 flex flex-wrap gap-3">
+          <div className="mt-6 flex flex-wrap gap-3 sm:mt-7">
             <Button href="/auth/register" variant="primary" size="lg">{t("cta.getStarted")}</Button>
             <Button href="/directory" variant="secondary" size="lg">{t("cta.findCollectionSite")}</Button>
           </div>
         </div>
-        <div className="relative min-h-[430px] overflow-hidden border-l border-white/[0.12]">
+        <div className="relative min-h-[320px] overflow-hidden border-t border-white/[0.12] md:min-h-[430px] md:border-l md:border-t-0">
           <Image
             src="/marketing/cta-bin.png"
             alt="A person holding a recycling bin of sorted materials"

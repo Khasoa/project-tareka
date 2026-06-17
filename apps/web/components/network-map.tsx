@@ -3,19 +3,14 @@
 import { cn } from "@/lib/utils";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Network Map — Nairobi constellation.
+// Network Map — Kenya constellation.
 //
-// Node layout redesign: Nairobi sits at true centre (280, 190).
-// The four regional cities are placed at varied distances and angles
-// so the backbone forms an asymmetric star — closer to real geography
-// and more visually interesting than a rectangle:
+// Nairobi sits at centre (280, 198). Three regional hubs radiate as star arms:
+//   Kiambu   N   — metro north corridor
+//   Kisumu   W   — western Kenya
+//   Mombasa  SE  — coastal corridor
 //
-//   Kiambu   NW  ~120° bearing, ~110px
-//   Thika    NE  ~050° bearing, ~135px
-//   Ngong    SW  ~225° bearing, ~120px
-//   Kitengela SE  ~155° bearing, ~130px
-//
-// Neighbourhood sites cluster around Nairobi at intermediate distances.
+// Inner neighbourhood sites cluster around Nairobi; north corridor links Kiambu.
 // ─────────────────────────────────────────────────────────────────────────────
 
 const MAP_BG = "#0D0F10";
@@ -33,24 +28,18 @@ interface MapNode {
 
 const NODES: MapNode[] = [
   // ── Hub ──────────────────────────────────────────────────────────────────
-  { id: "nairobi",    x: 280, y: 195, label: "Nairobi",    tier: "city",
+  { id: "nairobi",    x: 280, y: 198, label: "Nairobi",    tier: "city",
     materials: ["Plastic","Glass","Electronics","Metal","Paper","Textiles"] },
 
-  // ── Regional cities — varied angles & distances ───────────────────────────
-  // Kiambu: NNW, ~110 px
-  { id: "kiambu",    x: 170, y:  90, label: "Kiambu",    tier: "city",
-    materials: ["Plastic","Paper","Textiles"] },
-  // Thika: NNE, ~145 px (further — real distance is greater)
-  { id: "thika",     x: 400, y:  65, label: "Thika",     tier: "city",
-    materials: ["Metal","Electronics","Plastic"] },
-  // Ngong: WSW, ~130 px
-  { id: "ngong",     x: 115, y: 285, label: "Ngong",     tier: "city",
-    materials: ["Glass","Paper","Textiles"] },
-  // Kitengela: SSE, ~140 px
-  { id: "kitengela", x: 385, y: 315, label: "Kitengela", tier: "city",
-    materials: ["Plastic","Metal","Glass"] },
+  // ── Regional hubs — three star arms ─────────────────────────────────────────
+  { id: "kiambu",   x: 255, y:  72, label: "Kiambu",   tier: "city",
+    materials: ["Plastic", "Paper", "Textiles"] },
+  { id: "kisumu",   x:  72, y: 205, label: "Kisumu",   tier: "city",
+    materials: ["Glass", "Paper", "Metal"] },
+  { id: "mombasa",  x: 460, y: 312, label: "Mombasa",  tier: "city",
+    materials: ["Plastic", "Glass", "Metal"] },
 
-  // ── Inner neighbourhood sites — orbit Nairobi at 60-90 px ────────────────
+  // ── Inner neighbourhood sites — orbit Nairobi ───────────────────────────
   { id: "westlands", x: 192, y: 135, label: "Westlands",  tier: "site",
     materials: ["Plastic","Glass","Electronics"] },
   { id: "kilimani",  x: 210, y: 230, label: "Kilimani",   tier: "site",
@@ -93,44 +82,44 @@ const AMBIENT: { x: number; y: number; r: number; o: number }[] = [
   { x: 545, y: 140, r: 0.7, o: 0.05 },
 ];
 
-// Backbone + selective spokes (no dense mesh — keeps the star legible)
+// Primary arms from Nairobi — the visible star shape
+const STAR_ARMS: [string, string][] = [
+  ["nairobi", "kiambu"],
+  ["nairobi", "kisumu"],
+  ["nairobi", "mombasa"],
+];
+
+// Secondary links (sites + sparse cross-links) — kept subtle so the star stays legible
 const EDGES: [string, string][] = [
-  // City backbone
-  ["nairobi",   "kiambu"],
-  ["nairobi",   "thika"],
-  ["nairobi",   "ngong"],
-  ["nairobi",   "kitengela"],
-  ["kiambu",    "thika"],
-  ["thika",     "kitengela"],
-  ["ngong",     "kitengela"],
+  ...STAR_ARMS,
 
   // Nairobi hub spokes to inner sites
-  ["nairobi",   "westlands"],
-  ["nairobi",   "kilimani"],
-  ["nairobi",   "eastleigh"],
-  ["nairobi",   "roysambu"],
-  ["nairobi",   "southb"],
-  ["nairobi",   "lavington"],
+  ["nairobi", "westlands"],
+  ["nairobi", "kilimani"],
+  ["nairobi", "eastleigh"],
+  ["nairobi", "roysambu"],
+  ["nairobi", "southb"],
+  ["nairobi", "lavington"],
 
-  // Regional city connections to nearby sites
-  ["kiambu",    "westlands"],
-  ["kiambu",    "kasarani"],
-  ["thika",     "kasarani"],
-  ["thika",     "ruiru"],
-  ["thika",     "eastleigh"],
-  ["ngong",     "lavington"],
-  ["ngong",     "karen"],
-  ["kitengela", "southb"],
-  ["kitengela", "embakasi"],
-  ["kitengela", "langata"],
+  // Regional corridor links — subtle; star arms remain primary
+  ["kiambu", "westlands"],
+  ["kiambu", "kasarani"],
+  ["kiambu", "roysambu"],
+  ["kiambu", "ruiru"],
+  ["mombasa", "embakasi"],
+  ["mombasa", "donholm"],
 
-  // Inner site cross-links (sparse — only legible pairs)
+  // Inner site cross-links (sparse)
   ["westlands", "roysambu"],
   ["eastleigh", "donholm"],
-  ["donholm",   "embakasi"],
-  ["kilimani",  "langata"],
-  ["karen",     "langata"],
+  ["donholm", "embakasi"],
+  ["kilimani", "langata"],
+  ["karen", "langata"],
 ];
+
+function isStarArm(a: string, b: string): boolean {
+  return STAR_ARMS.some(([x, y]) => (x === a && y === b) || (x === b && y === a));
+}
 
 function getNode(id: string): MapNode | undefined {
   return NODES.find((n) => n.id === id);
@@ -147,7 +136,6 @@ interface NetworkMapProps {
 
 export function NetworkMap({ className, activeMaterial = "All materials" }: NetworkMapProps) {
   const nairobi = getNode("nairobi")!;
-  const regionalCities = ["kiambu", "thika", "ngong", "kitengela"];
 
   return (
     <div className={cn("relative overflow-hidden rounded-xl", className)}
@@ -156,7 +144,7 @@ export function NetworkMap({ className, activeMaterial = "All materials" }: Netw
         viewBox="0 0 560 400"
         className="h-full w-full"
         role="img"
-        aria-label="Illustrative constellation map of Nairobi-region collection network"
+        aria-label="Illustrative constellation map of Kenya collection network"
       >
         <defs>
           {/* Edge-to-edge vignette */}
@@ -165,18 +153,24 @@ export function NetworkMap({ className, activeMaterial = "All materials" }: Netw
             <stop offset="100%" stopColor={MAP_BG} stopOpacity="0.94" />
           </radialGradient>
 
-          {/* Nairobi haze — large soft bloom */}
+          {/* Nairobi haze — tight stellar core */}
           <radialGradient id="nmap-hub-bloom"
-            cx={nairobi.x} cy={nairobi.y} r="160" gradientUnits="userSpaceOnUse">
-            <stop offset="0%"   stopColor={SAGE} stopOpacity="0.16" />
-            <stop offset="35%"  stopColor={SAGE} stopOpacity="0.08" />
-            <stop offset="65%"  stopColor={SAGE} stopOpacity="0.03" />
+            cx={nairobi.x} cy={nairobi.y} r="28" gradientUnits="userSpaceOnUse">
+            <stop offset="0%"   stopColor={SAGE} stopOpacity="0.55" />
+            <stop offset="45%"  stopColor={SAGE} stopOpacity="0.18" />
             <stop offset="100%" stopColor={SAGE} stopOpacity="0" />
           </radialGradient>
 
-          {/* Fork blur — wide soft glow under backbone lines */}
-          <filter id="nmap-fork-blur" x="-80%" y="-80%" width="260%" height="260%">
-            <feGaussianBlur stdDeviation="18" result="blur" />
+          {/* Star-arm bloom — tapered glow along each primary arm */}
+          <radialGradient id="nmap-arm-bloom" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor={SAGE} stopOpacity="0.22" />
+            <stop offset="55%" stopColor={SAGE} stopOpacity="0.06" />
+            <stop offset="100%" stopColor={SAGE} stopOpacity="0" />
+          </radialGradient>
+
+          {/* Wide soft glow for star arms */}
+          <filter id="nmap-star-blur" x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur stdDeviation="22" result="blur" />
             <feMerge><feMergeNode in="blur" /></feMerge>
           </filter>
 
@@ -202,82 +196,144 @@ export function NetworkMap({ className, activeMaterial = "All materials" }: Netw
         {/* Base fill */}
         <rect width="560" height="400" fill={MAP_BG} />
 
-        {/* Hub bloom */}
-        <ellipse
-          cx={nairobi.x} cy={nairobi.y}
-          rx="170" ry="155"
-          fill="url(#nmap-hub-bloom)"
-        />
-
-        {/* Ambient star field */}
-        {AMBIENT.map((d, i) => (
-          <circle key={i} cx={d.x} cy={d.y} r={d.r} fill={SAGE} opacity={d.o} />
-        ))}
-
-        {/* ── Fork glow — wide blurred lines under the backbone ── */}
-        <g filter="url(#nmap-fork-blur)" aria-hidden>
-          {regionalCities.map((id) => {
-            const node = getNode(id);
-            if (!node) return null;
-            const vis = nodeVisible(node, activeMaterial);
+        {/* Star-arm glow — three radiating beams from Nairobi hub */}
+        <g filter="url(#nmap-star-blur)" aria-hidden>
+          {STAR_ARMS.map(([hubId, armId]) => {
+            const hub = getNode(hubId);
+            const arm = getNode(armId);
+            if (!hub || !arm) return null;
+            const vis = nodeVisible(arm, activeMaterial);
             return (
               <line
-                key={`fork-${id}`}
-                x1={nairobi.x} y1={nairobi.y}
-                x2={node.x} y2={node.y}
+                key={`star-glow-${armId}`}
+                x1={hub.x}
+                y1={hub.y}
+                x2={arm.x}
+                y2={arm.y}
                 stroke={SAGE_LT}
-                strokeWidth="12"
+                strokeWidth="22"
                 strokeLinecap="round"
-                opacity={vis ? 0.30 : 0.04}
+                opacity={vis ? 0.38 : 0.05}
                 style={{ transition: "opacity 0.4s" }}
               />
             );
           })}
         </g>
 
-        {/* ── Edges ── */}
-        {EDGES.map(([a, b]) => {
+        {/* Tapered bloom wedges along each star arm */}
+        {STAR_ARMS.map(([hubId, armId]) => {
+          const hub = getNode(hubId)!;
+          const arm = getNode(armId)!;
+          const vis = nodeVisible(arm, activeMaterial);
+          const mx = hub.x + (arm.x - hub.x) * 0.48;
+          const my = hub.y + (arm.y - hub.y) * 0.48;
+          const angle = (Math.atan2(arm.y - hub.y, arm.x - hub.x) * 180) / Math.PI;
+          const armLen = Math.hypot(arm.x - hub.x, arm.y - hub.y);
+          return (
+            <ellipse
+              key={`arm-bloom-${armId}`}
+              cx={mx}
+              cy={my}
+              rx={armLen * 0.22}
+              ry={armLen * 0.07}
+              fill="url(#nmap-arm-bloom)"
+              opacity={vis ? 0.9 : 0.12}
+              transform={`rotate(${angle} ${mx} ${my})`}
+              style={{ transition: "opacity 0.4s" }}
+            />
+          );
+        })}
+
+        {/* Hub core — tight stellar centre (replaces wide elliptical blob) */}
+        <circle cx={nairobi.x} cy={nairobi.y} r="28" fill="url(#nmap-hub-bloom)" />
+
+        {/* Ambient star field */}
+        {AMBIENT.map((d, i) => (
+          <circle key={i} cx={d.x} cy={d.y} r={d.r} fill={SAGE} opacity={d.o} />
+        ))}
+
+        {/* ── Primary star arms (crisp) ── */}
+        {STAR_ARMS.map(([a, b]) => {
+          const na = getNode(a);
+          const nb = getNode(b);
+          if (!na || !nb) return null;
+          const vis = nodeVisible(nb, activeMaterial);
+          return (
+            <line
+              key={`star-${a}-${b}`}
+              x1={na.x}
+              y1={na.y}
+              x2={nb.x}
+              y2={nb.y}
+              stroke={SAGE}
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              opacity={vis ? 0.72 : 0.06}
+              style={{ transition: "opacity 0.4s" }}
+            />
+          );
+        })}
+
+        {/* ── Secondary edges ── */}
+        {EDGES.filter(([a, b]) => !isStarArm(a, b)).map(([a, b]) => {
           const na = getNode(a);
           const nb = getNode(b);
           if (!na || !nb) return null;
           const visA = nodeVisible(na, activeMaterial);
           const visB = nodeVisible(nb, activeMaterial);
           const eitherVis = visA || visB;
-          const bothCity = na.tier === "city" && nb.tier === "city";
           const hubSpoke = na.id === "nairobi" || nb.id === "nairobi";
 
-          let opacity: number, stroke: string, width: number;
+          let opacity: number;
+          let stroke: string;
+          let width: number;
 
           if (!eitherVis) {
-            opacity = 0.06; stroke = "#3a3a3a"; width = 0.5;
-          } else if (bothCity) {
-            opacity = 0.55; stroke = SAGE; width = 1.4;
+            opacity = 0.05;
+            stroke = "#3a3a3a";
+            width = 0.5;
           } else if (hubSpoke) {
-            opacity = 0.20; stroke = "#868686"; width = 0.80;
+            opacity = 0.16;
+            stroke = "#6e6e6e";
+            width = 0.65;
           } else {
-            opacity = 0.13; stroke = "#5a5a5a"; width = 0.55;
+            opacity = 0.1;
+            stroke = "#4a4a4a";
+            width = 0.5;
           }
 
           return (
-            <line key={`${a}-${b}`}
-              x1={na.x} y1={na.y} x2={nb.x} y2={nb.y}
-              stroke={stroke} strokeWidth={width} opacity={opacity}
+            <line
+              key={`${a}-${b}`}
+              x1={na.x}
+              y1={na.y}
+              x2={nb.x}
+              y2={nb.y}
+              stroke={stroke}
+              strokeWidth={width}
+              opacity={opacity}
               style={{ transition: "opacity 0.4s" }}
             />
           );
         })}
 
-        {/* ── Animated flow on city backbone ── */}
-        {EDGES.map(([a, b]) => {
+        {/* ── Animated flow on star arms only ── */}
+        {STAR_ARMS.map(([a, b]) => {
           const na = getNode(a);
           const nb = getNode(b);
           if (!na || !nb) return null;
-          if (na.tier !== "city" || nb.tier !== "city") return null;
-          if (!nodeVisible(na, activeMaterial) || !nodeVisible(nb, activeMaterial)) return null;
+          if (!nodeVisible(nb, activeMaterial)) return null;
           return (
-            <line key={`flow-${a}-${b}`}
-              x1={na.x} y1={na.y} x2={nb.x} y2={nb.y}
-              stroke={SAGE} strokeWidth="1.6" opacity="0.35"
+            <line
+              key={`flow-${a}-${b}`}
+              x1={na.x}
+              y1={na.y}
+              x2={nb.x}
+              y2={nb.y}
+              stroke={SAGE_LT}
+              strokeWidth="2"
+              strokeLinecap="round"
+              opacity="0.45"
               className="nmap-route-flow"
             />
           );
@@ -305,11 +361,26 @@ export function NetworkMap({ className, activeMaterial = "All materials" }: Netw
 
               {isNairobi && (
                 <>
-                  {/* Outer static rings for stellar magnitude */}
-                  <circle cx={node.x} cy={node.y} r="32" fill="none"
-                    stroke={SAGE} strokeWidth="0.4" opacity="0.12" />
-                  <circle cx={node.x} cy={node.y} r="24" fill="none"
-                    stroke={SAGE} strokeWidth="0.45" opacity="0.18" />
+                  {/* Star outline — arms align to regional hubs */}
+                  {STAR_ARMS.map(([, armId]) => {
+                    const arm = getNode(armId);
+                    if (!arm) return null;
+                    return (
+                      <line
+                        key={`star-ray-${armId}`}
+                        x1={node.x}
+                        y1={node.y}
+                        x2={arm.x}
+                        y2={arm.y}
+                        stroke={SAGE}
+                        strokeWidth="0.35"
+                        strokeOpacity="0.2"
+                        strokeLinecap="round"
+                      />
+                    );
+                  })}
+                  <circle cx={node.x} cy={node.y} r="18" fill="none"
+                    stroke={SAGE} strokeWidth="0.35" opacity="0.14" />
                 </>
               )}
 

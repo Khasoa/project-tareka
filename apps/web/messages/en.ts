@@ -137,8 +137,18 @@ export const en = {
     },
     network: {
       kicker: "Collection network",
-      headline: "Nairobi and surrounding areas",
+      headline: "Kenya collection network",
       sub: "Verified collection sites across the region. Filter by material type.",
+      story:
+        "A live constellation of verified collection infrastructure — Nairobi at the centre, connected to regional hubs across Kenya.",
+      telemetryLabel: "Network telemetry",
+      metricSites: "Connected sites",
+      metricHubs: "Regional hubs",
+      metricMaterials: "Material streams",
+      liveSitesLabel: "Active collection points",
+      mapCaption: "Constellation map · illustrative regional coverage",
+      infraNote:
+        "Every node represents operational infrastructure — verified sites linked through operator-confirmed intake.",
       viewDirectory: "View full directory",
     },
     liveData: {
@@ -193,6 +203,19 @@ export const en = {
       "Company access requests are reviewed before activation so operational roles, sites, and permissions are configured correctly for your team from day one.",
     s3Button: "Request access",
     s3FinePrint: "Already have an account?",
+    infraConsoleLabel: "Operations console",
+    infraNote:
+      "Field intake flows through operator sign-off into company-visible records — no self-reported estimates.",
+    auditTrailLabel: "Access review trail",
+    auditStep1: "Company submits access request with operational details",
+    auditStep2: "Platform reviews roles, sites, and permission scope",
+    auditStep3: "Verified partner workspace activated with configured infrastructure",
+    auditFootnote:
+      "Operational data stays within your organisation workspace — no public payout identities on the directory.",
+    s4Kicker: "Partner onboarding",
+    s4Title: "Request access to your organisation workspace",
+    s4Body:
+      "Submit your company details for review. Verified partners receive configured sites, operator roles, and reporting infrastructure.",
   },
   directory: {
     kicker: "Public directory",

@@ -138,8 +138,18 @@ export const sw = {
     },
     network: {
       kicker: "Mtandao wa ukusanyaji",
-      headline: "Nairobi na mipaka yake",
+      headline: "Mtandao wa ukusanyaji wa Kenya",
       sub: "Vituo vilivyothibitishwa kila upande. Chuja kwa aina ya taka.",
+      story:
+        "Mkusanyiko hai wa miundombinu ya ukusanyaji iliyothibitishwa — Nairobi katikati, iliyounganishwa na vituo vya kanda kote Kenya.",
+      telemetryLabel: "Telemetry ya mtandao",
+      metricSites: "Vituo vilivyounganishwa",
+      metricHubs: "Vituo vya kanda",
+      metricMaterials: "Aina za taka",
+      liveSitesLabel: "Vituo hai vya ukusanyaji",
+      mapCaption: "Ramani ya mkusanyiko · maelezo ya kanda",
+      infraNote:
+        "Kila kituo kinawakilisha miundombinu ya uendeshaji — vituo vilivyothibitishwa vilivyounganishwa kupitia utoaji uliothibitishwa na mfanyakazi.",
       viewDirectory: "Ona orodha nzima",
     },
     liveData: {
@@ -195,6 +205,19 @@ export const sw = {
       "Akaunti za kampuni hupiti ukaguzi kabla ya kuwezeshwa ili majukumu, vituo na ruhusa ziwekwe sawa kwa timu yako tangu siku ya kwanza.",
     s3Button: "Omba ufikiaji",
     s3FinePrint: "Tayari una akaunti?",
+    infraConsoleLabel: "Dashibodi ya uendeshaji",
+    infraNote:
+      "Ukusanyaji wa uwanjani hupitia sahihi ya mfanyakazi hadi rekodi zinazoonekana kwa kampuni — si makadirio yaliyojitolea.",
+    auditTrailLabel: "Mfuatano wa ukaguzi wa ufikiaji",
+    auditStep1: "Kampuni inawasilisha ombi la ufikiaji pamoja na maelezo ya uendeshaji",
+    auditStep2: "Jukwaa hukagua majukumu, vituo na wigo wa ruhusa",
+    auditStep3: "Nafasi ya mshirika aliyethibitishwa inawezeshwa na miundombinu iliyowekwa",
+    auditFootnote:
+      "Data ya uendeshaji hubaki ndani ya nafasi ya kampuni yako — hakuna utambulisho wa malipo hadharani kwenye saraka.",
+    s4Kicker: "Uandikishaji wa mshirika",
+    s4Title: "Omba ufikiaji wa nafasi ya shirika lako",
+    s4Body:
+      "Wasilisha maelezo ya kampuni yako kwa ukaguzi. Washirika waliothibitishwa hupata vituo vilivyowekwa, majukumu ya wafanyakazi, na miundombinu ya ripoti.",
   },
   directory: {
     kicker: "Saraka ya umma",
