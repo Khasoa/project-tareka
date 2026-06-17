@@ -127,19 +127,14 @@ export function Navbar({
               )}
             </>
           ) : (
-            <>
-              <Button
-                href="/auth/login"
-                variant="secondary"
-                size="sm"
-                className="hidden sm:inline-flex"
-              >
-                {t("nav.signIn")}
-              </Button>
-              <Button href="/auth/register" variant="primary" size="sm">
-                {t("nav.rewards")}
-              </Button>
-            </>
+            <Button
+              href="/auth/login"
+              variant="secondary"
+              size="sm"
+              className="hidden sm:inline-flex"
+            >
+              {t("nav.signIn")}
+            </Button>
           )}
           {marketingAudience === "companies" ? null : (
             <Button href="/" variant="secondary" size="sm" className="md:hidden">

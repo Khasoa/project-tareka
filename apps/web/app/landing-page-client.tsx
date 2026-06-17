@@ -91,7 +91,7 @@ function HeroSection() {
         {/* Right — app image */}
         <div className="relative">
           <Image
-            src="/marketing/hero-app.png"
+            src="/marketing/hero-app.webp"
             alt="The tareka. app open at a verified collection station, showing the map and impact record"
             width={1287}
             height={716}
@@ -229,7 +229,7 @@ function FinalCTA() {
         </div>
         <div className="relative min-h-[320px] overflow-hidden border-t border-white/[0.12] md:min-h-[430px] md:border-l md:border-t-0">
           <Image
-            src="/marketing/cta-bin.png"
+            src="/marketing/cta-bin.webp"
             alt="A person holding a recycling bin of sorted materials"
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
